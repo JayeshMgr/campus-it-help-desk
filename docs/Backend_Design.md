@@ -69,3 +69,22 @@ When the backend starts, `server.js` loads the environment variables and connect
 If the database connection fails, the backend stops instead of continuing without database access.
 
 
+## 6. Student Registration Design
+
+FR-01 allows a student to register an account.
+
+Student accounts contain:
+
+- Email
+- Hashed password
+- Role
+
+The default role for newly registered accounts is `student`.
+
+Registration is handled through:
+
+`POST /api/auth/register`
+
+The backend verifies that the email and password are provided and checks that the email is not already registered. The password is hashed using bcryptjs before the account is stored in MongoDB.
+
+The registration response does not return the user's password.
