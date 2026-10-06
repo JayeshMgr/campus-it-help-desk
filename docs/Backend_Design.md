@@ -88,3 +88,18 @@ Registration is handled through:
 The backend verifies that the email and password are provided and checks that the email is not already registered. The password is hashed using bcryptjs before the account is stored in MongoDB.
 
 The registration response does not return the user's password.
+
+
+## 7. User Login Design
+
+FR-02 allows a registered user to log in using email and password.
+
+Login is handled through:
+
+`POST /api/auth/login`
+
+The backend checks that the email and password are provided, finds the user account, and compares the entered password with the hashed password stored in MongoDB.
+
+If the credentials are valid, the backend creates a JWT containing the user's ID and role. The token is returned with the user's basic account information.
+
+Invalid credentials return an unauthorized response.
