@@ -16,7 +16,7 @@ The backend will use the following technologies:
 - MongoDB Atlas for persistent cloud data storage.
 - Mongoose for communication between the Node.js backend and MongoDB.
 - dotenv for loading environment variables.
-- cors for allowing communication between the React frontend and backend.
+- cors for allowing communication between the frontend and backend.
 - bcryptjs for password hashing.
 - jsonwebtoken for authentication tokens.
 - Nodemon for automatic server restart during development.
@@ -28,7 +28,7 @@ The backend follows a simple layered structure to keep the project organized and
 
 - `config/` stores configuration code such as the MongoDB connection.
 - `controllers/` will contain the main logic for handling requests.
-- `middleware/` will contain authentication and role-checking logic.
+- `middlewares/` contains authentication and role-checking logic.
 - `models/` will define the MongoDB data structures.
 - `routes/` will define the API endpoints.
 - `utils/` will contain reusable helper functions if needed.
@@ -42,7 +42,7 @@ The frontend and backend will communicate using HTTP requests through REST API e
 
 The general request flow will be:
 
-React Frontend
+Frontend (HTML/CSS/JavaScript)
 → Express Route
 → Middleware if required
 → Controller
@@ -103,3 +103,26 @@ The backend checks that the email and password are provided, finds the user acco
 If the credentials are valid, the backend creates a JWT containing the user's ID and role. The token is returned with the user's basic account information.
 
 Invalid credentials return an unauthorized response.
+
+
+## 8. Role-Based Access Control Design
+
+FR-04 supports two user roles: Student and IT Support Staff.
+
+The backend uses JWT authentication and role-based authorization to control access to protected API routes.
+
+Authentication is handled by:
+
+`server/middlewares/authMiddleware.js`
+
+This middleware checks for a Bearer token in the request's Authorization header and verifies it using the JWT secret. If the token is valid, the decoded user information is attached to the request. Missing, invalid, or expired tokens return a 401 Unauthorized response.
+
+Role authorization is handled by:
+
+`server/middlewares/roleMiddleware.js`
+
+This middleware checks whether the authenticated user's role is permitted to access the requested route. Unauthorized roles receive a 403 Forbidden response.
+
+Students register through the registration API and receive the default `student` role. IT Support Staff accounts are created administratively with the `staff` role. Both roles use the same login endpoint.
+
+The authentication and role-checking middleware have been tested using temporary protected routes in Postman. These middleware functions will be applied to the appropriate student and staff ticket endpoints as those features are implemented.
