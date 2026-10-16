@@ -4,25 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
-    <title>Campus IT System</title>
-    <meta name="description" content="A brief description of your webpage for search engines.">
-    
+
+    <title>Campus IT Help Desk</title>
+    <meta name="description" content="Submit and track campus IT support requests.">
+
     <!-- Link to your external CSS stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="home">
 
-    <!-- Main visible content goes here -->
-    <h1>Welcome!</h1>
-    <h2>This is our Campus IT report system.</h2>
+    <header>
+        <h1>Campus IT Help Desk</h1>
+    </header>
 
-    <button onclick="window.location.href='admin_sign_in.html'">To sign in as a administrator, click here.</button>
-    <button onclick="window.location.href='student_sign_in.html'">To sign in as a student, click here.</button>
-     <button onclick="window.location.href='register.html'">If you do not have an account, click here.</button>
-    
+    <main>
+        <section class="home-hero">
+            <h2>Welcome to Campus IT Help Desk</h2>
+            <p>Submit IT support requests, track your tickets, and get help with campus technology issues.</p>
 
-    <!-- Link to your external JavaScript file -->
-    <script src="../server/app.js"></script> 
+            <div class="home-actions">
+                <a href="login.html" class="home-button home-button-primary">Sign In</a>
+                <a href="register.html" class="home-button home-button-secondary">Create Student Account</a>
+            </div>
+        </section>
+
+        <section class="home-roles">
+            <div class="home-card">
+                <h3>Students</h3>
+                <p>Submit support tickets for campus technology issues and track their status.</p>
+            </div>
+
+            <div class="home-card">
+                <h3>IT Support Staff</h3>
+                <p>View and manage incoming support requests and resolve them.</p>
+            </div>
+        </section>
+    </main>
+
 </body>
 </html>
