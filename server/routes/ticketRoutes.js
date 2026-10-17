@@ -44,4 +44,17 @@ router.get("/mine", authMiddleware, roleMiddleware("student"), async (req, res) 
   }
 });
 
+//Get all tickets  for ITStaff
+router.get('/all', authMiddleware, roleMiddleware('staff'), async (req, res) => { 
+  try {
+    const tickets = await Ticket.find();
+    res.status(200).json(tickets);
+  }
+  catch (error) { 
+    res.status(500).json({
+      message: "Failed to retrieve tickets",
+    });
+  }
+})
+
 module.exports = router;
