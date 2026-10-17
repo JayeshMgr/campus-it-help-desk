@@ -136,3 +136,216 @@ footer {
 
     text-align: center;
 }
+
+
+/* =========================
+   Homepage (scoped to body.home)
+   ========================= */
+
+.home main {
+    width: auto;
+    max-width: 900px;
+
+    margin: 40px auto;
+    padding: 0 20px;
+
+    background-color: transparent;
+}
+
+.home-hero {
+    padding: 50px 30px;
+
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    text-align: center;
+}
+
+.home-hero h2 {
+    margin-top: 0;
+    font-size: 30px;
+}
+
+.home-hero p {
+    max-width: 560px;
+    margin: 0 auto 30px;
+
+    font-size: 18px;
+    color: #555555;
+}
+
+.home-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 12px 28px;
+
+    border: 2px solid #0066cc;
+    border-radius: 5px;
+
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.home-button:hover {
+    text-decoration: none;
+}
+
+.home-button-primary {
+    background-color: #0066cc;
+    color: white;
+}
+
+.home-button-primary:hover {
+    background-color: #004c99;
+    border-color: #004c99;
+}
+
+.home-button-secondary {
+    background-color: white;
+    color: #0066cc;
+}
+
+.home-button-secondary:hover {
+    background-color: #e8f1fb;
+}
+
+.home-roles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+    margin-top: 30px;
+}
+
+.home-card {
+    padding: 25px;
+
+    background-color: white;
+    border-top: 4px solid #0066cc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.home-card h3 {
+    margin-top: 0;
+}
+
+.home-card p {
+    margin-bottom: 0;
+    color: #555555;
+}
+
+@media (max-width: 600px) {
+    .home-hero {
+        padding: 35px 20px;
+    }
+
+    .home-hero h2 {
+        font-size: 24px;
+    }
+
+    .home-roles {
+        grid-template-columns: 1fr;
+    }
+
+    .home-button {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+}
+
+
+/* =========================
+   Registration Page (scoped to body.register)
+   ========================= */
+
+.register main {
+    width: auto;
+    max-width: 440px;
+
+    margin: 40px auto;
+    padding: 0 20px;
+
+    background-color: transparent;
+}
+
+.register-card {
+    padding: 35px 30px;
+
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.register-card h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.register-intro {
+    margin-bottom: 25px;
+
+    color: #555555;
+    text-align: center;
+}
+
+.register-field {
+    margin-bottom: 18px;
+}
+
+.register-field label {
+    display: block;
+    margin-bottom: 6px;
+
+    font-weight: bold;
+}
+
+.register-field input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.register-error {
+    color: #cc0000;
+}
+
+.register-button {
+    width: 100%;
+    padding: 12px;
+
+    background-color: #0066cc;
+
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.register-button:hover {
+    background-color: #004c99;
+}
+
+.register-links {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.register-links p {
+    margin: 8px 0;
+}
+
+@media (max-width: 600px) {
+    .register main {
+        margin: 20px auto;
+    }
+
+    .register-card {
+        padding: 25px 20px;
+    }
+}

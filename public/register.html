@@ -4,24 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
-    <title>Campus IT System</title>
-    <meta name="description" content="A brief description of your webpage for search engines.">
-    
+
+    <title>Campus IT Help Desk - Create Student Account</title>
+    <meta name="description" content="Create a student account for the Campus IT Help Desk.">
+
     <!-- Link to your external CSS stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="register">
 
-    <!-- Main visible content goes here -->
-    <h1>This is the registration page.</h1>
-    <h2>Enter a username and password, then check if you are an admin or student.</h2>
+    <header>
+        <h1>Campus IT Help Desk</h1>
+    </header>
 
-    
-    <input type="email">Email input</input>
-    <input type="password">Password input</input>
-    <button>Submit</button>
-    <!-- Link to your external JavaScript file -->
-    <script src="../server/app.js"></script> 
+    <main>
+        <section class="register-card">
+            <h2>Create Student Account</h2>
+            <p class="register-intro">Register to submit and track campus IT support requests.</p>
+
+            <form id="registerForm" method="post">
+                <div class="register-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="register-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <p id="errorMessage" class="register-error"></p>
+
+                <button type="submit" id="registerButton" class="register-button">Create Account</button>
+            </form>
+
+            <div class="register-links">
+                <p>Already have an account? <a href="login.html">Sign In</a></p>
+                <p><a href="index.html">Back to homepage</a></p>
+            </div>
+        </section>
+    </main>
+
 </body>
 </html>
