@@ -5,7 +5,7 @@ async function loadITRequests() {
 
   try {
     // Get all IT requests from the server
-    const response = await fetch("/api/tickets/all", {
+    const response = await fetch("/api/tickets/mine", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -15,13 +15,14 @@ async function loadITRequests() {
       throw new Error("Failed to fetch IT requests");
     }
 
-    const requests = await response.json();
+    /*const requests = await response.json();
 
     // Find requests belonging to this student
     const studentRequests = requests.filter(
       (request) => request.studentId === token
     );
-
+*/
+    const studentRequests = await response.json();
     // Clear the existing list
     requestList.textContent = "";
 
