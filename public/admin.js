@@ -54,4 +54,12 @@ async function loadTickets() {
   }
 }
 
+async function logout() {
+  // Clear the session storage
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("role");
+  // Redirect to the login page
+  window.location.href = "login.html";
+}
+
 loadTickets();
