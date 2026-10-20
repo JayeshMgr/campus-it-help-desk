@@ -78,4 +78,45 @@ router.get('/all', authMiddleware, roleMiddleware('staff'), async (req, res) => 
   }
 })
 
+
+// Update ticket's status (IT staff only)
+// PATCH /api/tickets/:id/status
+router.patch(
+  "/:id/status",
+  authMiddleware,
+  roleMiddleware('staff'),
+  async (req, res) => {
+    try {
+      const { status } = req.body;
+
+      //Only allow these three statuses
+      const allowedStatuses = ["Open", "In Progress", "Closed"];
+
+      if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({
+          message: "Invalid ticket status",
+        });
+      }
+
+        // find ticket by id and update status
+        const ticket = await Ticket.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
+
+        // Return 404 if ticket not found
+        if (!ticket) {
+          return res.status(404).json({
+            message: "Ticket not found",
+          });
+        }
+
+        // Return the updated ticket
+        res.status(200).json(ticket);
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to update ticket status",
+      });
+    }
+  }
+);
+
+
 module.exports = router;
