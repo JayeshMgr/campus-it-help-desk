@@ -10,6 +10,7 @@ const express = require("express");
 const Ticket = require("../models/Ticket");
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
+const mongoose = require("mongoose");
 
 const router = express.Router();
 
@@ -118,5 +119,73 @@ router.patch(
   }
 );
 
+//Add a comment to a ticket(students and staff)
+//POST /api/tickets/:id/comments
 
+router.post(
+  "/:id/comments",
+  authMiddleware,
+  roleMiddleware("student", "staff"),
+  async (req, res) => {
+    try {
+      const comment = req.body?.comment;
+
+      // Make sure the comment contains valid text.
+      if (
+        typeof comment !== "string" ||
+        !comment.trim() ||
+        comment.trim().length > 2000
+      ) {
+        return res.status(400).json({
+          message: "Comment must be between 1 and 2000 characters",
+        });
+      }
+
+      // Check whether the ticket ID is valid.
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({
+          message: "Invalid ticket ID",
+        });
+      }
+
+      // Staff can comment on any ticket.
+      const filter = { _id: req.params.id };
+
+      // Students can only comment on their own non-closed tickets.
+      if (req.user.role === "student") {
+        filter.studentId = req.user.userId;
+        filter.status = { $ne: "Closed" };
+      }
+
+      // Add the comment to the ticket's comment history.
+      const ticket = await Ticket.findOneAndUpdate(
+        filter,
+        {
+          $push: {
+            comments: {
+              authorId: req.user.userId,
+              authorRole: req.user.role,
+              type: "comment",
+              text: comment.trim(),
+            },
+          },
+        },
+        { new: true, runValidators: true },
+      );
+
+      if (!ticket) {
+        return res.status(404).json({
+          message: "Ticket not found or commenting not allowed",
+        });
+      }
+
+      // Return the ticket with its updated comments.
+      res.status(201).json(ticket);
+    } catch (error) {
+      res.status(500).json({
+        message: "Failed to add comment",
+      });
+    }
+  },
+);
 module.exports = router;
