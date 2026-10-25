@@ -1,10 +1,34 @@
+
 function createTicketControls(ticket, ticketItem, token) {
+
+  // Display existing comments
+  const commentsHeading = document.createElement("h4");
+  commentsHeading.textContent = "Comments";
+  ticketItem.appendChild(commentsHeading);
+
+  if (ticket.comments && ticket.comments.length > 0) {
+    ticket.comments.forEach((comment) => {
+      const commentElement = document.createElement("p");
+
+      // If comments are objects, get their text property.
+      // If they are strings, display the string directly.
+      commentElement.textContent =
+        typeof comment === "string" ? comment : comment.text;
+
+      ticketItem.appendChild(commentElement);
+    });
+  } else {
+    const noComments = document.createElement("p");
+    noComments.textContent = "No comments yet.";
+    ticketItem.appendChild(noComments);
+  }
+
   // Do not show controls for closed tickets
-  if (ticket.status === "closed") {
+  if (ticket.status === "Closed") {
     return;
   }
 
-  //create area for comment input
+  // Create area for comment input
   const commentInput = document.createElement("textarea");
   commentInput.placeholder = "Enter a comment or resolution note";
   commentInput.rows = 3;
@@ -14,12 +38,18 @@ function createTicketControls(ticket, ticketItem, token) {
   const addCommentButton = document.createElement("button");
   addCommentButton.textContent = "Add Comment";
 
-  //update ticket with the comment
   addCommentButton.addEventListener("click", async () => {
+    const comment = commentInput.value.trim();
+
+    if (!comment) {
+      alert("Please enter a comment.");
+      return;
+    }
+
     await updateTicket(
       ticket._id,
       "/comments",
-      { comment: commentInput.value },
+      { comment },
       token
     );
   });
@@ -54,6 +84,7 @@ function createTicketControls(ticket, ticketItem, token) {
     closeButton
   );
 }
+
 
 async function loadTickets() {
   const ticketList = document.getElementById("ticket-list");
@@ -111,6 +142,47 @@ async function loadTickets() {
     console.error(error);
   }
 }
+
+
+async function updateTicket(ticketId, action, data, token) {
+  try {
+    // Comments use POST; closing a ticket uses PATCH.
+    const method = action === "/comments" ? "POST" : "PATCH";
+
+    const response = await fetch(
+      `/api/tickets/${ticketId}${action}`,
+      {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error("Ticket update failed:", result);
+      alert(result.message || "Failed to update ticket.");
+      return;
+    }
+
+    alert(
+      action === "/comments"
+        ? "Comment added successfully."
+        : "Ticket closed successfully."
+    );
+
+    // Reload the tickets so the new comment or status appears.
+    await loadTickets();
+  } catch (error) {
+    console.error("Error updating ticket:", error);
+    alert("An error occurred while updating the ticket.");
+  }
+}
+
 
 async function logout() {
   // Clear the session storage

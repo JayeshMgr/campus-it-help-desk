@@ -188,4 +188,70 @@ router.post(
     }
   },
 );
+
+ // Close a ticket and save a resolution comment (staff only)
+ // PATCH /api/tickets/:id/resolve
+router.patch(
+  "/:id/resolve",
+  authMiddleware,
+  roleMiddleware("staff"),
+  async (req, res) => {
+    try {
+      const comment = req.body?.comment;
+
+      if (
+        typeof comment !== "string" ||
+        !comment.trim() ||
+        comment.trim().length > 2000
+      ) {
+        return res.status(400).json({
+          message: "Resolution comment must be between 1 and 2000 characters",
+        });
+      }
+
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({
+          message: "Invalid ticket ID",
+        });
+      }
+
+      const ticket = await Ticket.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          status: { $ne: "Closed" },
+        },
+        {
+          $push: {
+            comments: {
+              authorId: req.user.userId,
+              authorRole: "staff",
+              type: "resolution",
+              text: comment.trim(),
+            },
+          },
+          $set: {
+            status: "Closed",
+          },
+        },
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
+
+      if (!ticket) {
+        return res.status(404).json({
+          message: "Ticket not found or already closed",
+        });
+      }
+
+      res.status(200).json(ticket);
+    } catch (error) {
+      console.error("Failed to resolve ticket:", error);
+      res.status(500).json({
+        message: "Failed to close ticket",
+      });
+    }
+  }
+);
 module.exports = router;
