@@ -1,7 +1,4 @@
 
-function displayStudentInfo(token) {
-
-}
 
 function createTicketControls(ticket, ticketItem, token) {
 
