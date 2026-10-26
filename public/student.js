@@ -23,9 +23,14 @@ function createTicketControls(ticket, ticketItem, token) {
     ? `${comment.authorRole}: `
     : "";
 
-  const label = comment.type === "resolution"
-    ? "[Resolution] "
-    : "";
+    let label = "";
+
+  if (comment.type === "resolution") {
+    label = "[Resolution] ";
+  } else if (comment.type === "reopen") {
+    label = "[Reopening Explanation] ";
+  }
+
 
   commentElement.textContent =
     `${label}${author}${comment.text}`;
@@ -39,9 +44,44 @@ function createTicketControls(ticket, ticketItem, token) {
   }
 
   // Do not show controls for closed tickets
-  if (ticket.status === "Closed") {
-    return;
-  }
+ // Closed tickets get a Reopen Ticket form.
+if (ticket.status === "Closed") {
+  const reopenHeading = document.createElement("h4");
+  reopenHeading.textContent = "Reopen Ticket";
+
+  const reopenExplanation = document.createElement("textarea");
+  reopenExplanation.placeholder =
+    "Explain why this ticket needs to be reopened...";
+  reopenExplanation.rows = 3;
+  reopenExplanation.maxLength = 2000;
+
+  const reopenButton = document.createElement("button");
+  reopenButton.textContent = "Reopen Ticket";
+
+  reopenButton.addEventListener("click", async () => {
+    const comment = reopenExplanation.value.trim();
+
+    if (!comment) {
+      alert("Please explain why this ticket needs to be reopened.");
+      return;
+    }
+
+    await updateTicket(
+      ticket._id,
+      "/reopen",
+      { comment },
+      token
+    );
+  });
+
+  ticketItem.append(
+    reopenHeading,
+    reopenExplanation,
+    reopenButton
+  );
+
+  return;
+}
 
   // Create area for comment input
   const commentInput = document.createElement("textarea");
@@ -161,12 +201,13 @@ async function updateTicket(ticketId, action, data, token) {
       return;
     }
 
-    alert(
-      action === "/comments"
-        ? "Comment added successfully."
-        : "Ticket closed successfully."
-    );
-
+  if (action === "/comments") {
+  alert("Comment added successfully.");
+} else if (action === "/reopen") {
+  alert("Ticket reopened successfully.");
+} else {
+  alert("Ticket closed successfully.");
+}
     // Reload the tickets so the new comment or status appears.
     await loadITRequests();
   } catch (error) {

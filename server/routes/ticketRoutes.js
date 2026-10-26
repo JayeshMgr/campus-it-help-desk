@@ -254,4 +254,70 @@ router.patch(
     }
   }
 );
+
+router.patch("/:id/reopen",
+  authMiddleware,
+  roleMiddleware("student"),
+  async (req, res) => {
+  try {
+
+    console.log("REOPEN ROUTE HIT");
+    // Only students can reopen tickets.
+    if (req.user.role !== "student") {
+      return res.status(403).json({
+        message: "Only students can reopen tickets."
+      });
+    }
+
+    const { comment } = req.body;
+
+    // Require an explanation.
+    if (
+      typeof comment !== "string" ||
+      comment.trim().length === 0 ||
+      comment.trim().length > 2000
+    ) {
+      return res.status(400).json({
+        message: "Please provide an explanation of why this ticket needs to be reopened."
+      });
+    }
+
+    // Reopen only a closed ticket belonging to this student.
+    const ticket = await Ticket.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        studentId: req.user.userId,
+        status: "Closed"
+      },
+      {
+        $set: { status: "Open" },
+        $push: {
+          comments: {
+            authorId: req.user.userId,
+            authorRole: "student",
+            type: "reopen",
+            text: comment.trim()
+          }
+        }
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!ticket) {
+      return res.status(404).json({
+        message: "Closed ticket not found or you do not have permission to reopen it."
+      });
+    }
+
+    res.json({
+      message: "Ticket reopened successfully.",
+      ticket
+    });
+  } catch (error) {
+    console.error("Error reopening ticket:", error);
+    res.status(500).json({
+      message: "Failed to reopen ticket."
+    });
+  }
+});
 module.exports = router;

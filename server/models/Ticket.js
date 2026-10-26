@@ -27,7 +27,7 @@ const commentSchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ["comment", "resolution", "other"],
+    enum: ["comment", "resolution", "reopen","other"],
     default: "comment"
   },
 
