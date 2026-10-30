@@ -349,3 +349,60 @@ footer {
         padding: 25px 20px;
     }
 }
+
+
+/*====================
+    Student Page
+    ===============*/
+
+.student main {
+    width: auto;
+    max-width: 900px;
+    
+    margin: 40px auto;
+    padding: 0 20px;
+
+    background-color: transparent;
+}
+
+.student-card {
+    padding: 25px;
+    max-width: 560px;
+    text-align: center;
+    margin: 0 auto ;
+    background-color: white;
+    border-top: 4px solid #0066cc;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.student-card h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+
+.student-button {
+    text-align: right;
+    width: 100%;
+    padding: 12px;
+    background-color: #0066cc;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.student-button:hover {
+    background-color: #004c99;
+}
+
+
+
+@media (max-width: 600px) {
+    .student main {
+        margin: 20px auto;
+    }
+
+    .student-card {
+        padding: 25px 20px;
+    }
+}
