@@ -1,6 +1,4 @@
-
 function createTicketControls(ticket, ticketItem, token) {
-
   // Display existing comments
   const commentsHeading = document.createElement("h4");
   commentsHeading.textContent = "Comments";
@@ -12,33 +10,58 @@ function createTicketControls(ticket, ticketItem, token) {
 
       // If comments are objects, get their text property.
       // If they are strings, display the string directly.
-     if (typeof comment === "string") {
-    // Support older comments stored as plain strings.
-    commentElement.textContent = comment;
-  } else {
-    const author = comment.authorRole
-      ? `${comment.authorRole}: `
-      : "";
+      if (typeof comment === "string") {
+        // Support older comments stored as plain strings.
+        commentElement.textContent = comment;
+      } else {
+        const author = comment.authorRole ? `${comment.authorRole}: ` : "";
 
-    let label = "";
+        let label = "";
 
-    if (comment.type === "resolution") {
-      label = "[Resolution] ";
-    } else if (comment.type === "reopen") {
-      label = "[Reopening Explanation] ";
-    }
+        if (comment.type === "resolution") {
+          label = "[Resolution] ";
+        } else if (comment.type === "reopen") {
+          label = "[Reopening Explanation] ";
+        }
 
-    commentElement.textContent =
-      `${label}${author}${comment.text}`;
-  }
+        commentElement.textContent = `${label}${author}${comment.text}`;
+      }
 
-  ticketItem.appendChild(commentElement);
-});
+      ticketItem.appendChild(commentElement);
+    });
   } else {
     const noComments = document.createElement("p");
     noComments.textContent = "No comments yet.";
     ticketItem.appendChild(noComments);
   }
+
+  // Let staff change the ticket status
+  const statusSelect = document.createElement("select");
+
+  ["Open", "In Progress", "Closed"].forEach((value) => {
+    const option = document.createElement("option");
+    option.value = value;
+    option.textContent = value;
+    statusSelect.appendChild(option);
+  });
+
+  // Show the ticket's current status
+  statusSelect.value = ticket.status;
+
+  // Button to save the new status
+  const updateStatusButton = document.createElement("button");
+  updateStatusButton.textContent = "Update Status";
+
+  updateStatusButton.addEventListener("click", async () => {
+    await updateTicket(
+      ticket._id,
+      "/status",
+      { status: statusSelect.value },
+      token,
+    );
+  });
+
+  ticketItem.append(statusSelect, updateStatusButton);
 
   // Do not show controls for closed tickets
   if (ticket.status === "Closed") {
@@ -63,12 +86,7 @@ function createTicketControls(ticket, ticketItem, token) {
       return;
     }
 
-    await updateTicket(
-      ticket._id,
-      "/comments",
-      { comment },
-      token
-    );
+    await updateTicket(ticket._id, "/comments", { comment }, token);
   });
 
   // Close Ticket button
@@ -87,21 +105,36 @@ function createTicketControls(ticket, ticketItem, token) {
       return;
     }
 
-    await updateTicket(
-      ticket._id,
-      "/resolve",
-      { comment },
-      token
-    );
+    await updateTicket(ticket._id, "/resolve", { comment }, token);
   });
 
-  ticketItem.append(
-    commentInput,
-    addCommentButton,
-    closeButton
-  );
+  ticketItem.append(commentInput, addCommentButton, closeButton);
 }
 
+// Send a comment or resolution note to the backend
+async function updateTicket(ticketId, path, body, token) {
+  try {
+    const response = await fetch(`/api/tickets/${ticketId}${path}`, {
+      method: path === "/resolve" || path === "/status" ? "PATCH" : "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      alert("Failed to update ticket.");
+      return;
+    }
+
+    // Refresh the tickets after saving
+    await loadTickets();
+  } catch (error) {
+    console.error(error);
+    alert("Unable to connect to server.");
+  }
+}
 
 async function loadTickets() {
   const ticketList = document.getElementById("ticket-list");
@@ -160,8 +193,6 @@ async function loadTickets() {
   }
 }
 
-
-
 async function logout() {
   // Clear the session storage
   sessionStorage.removeItem("token");
@@ -169,6 +200,5 @@ async function logout() {
   // Redirect to the login page
   window.location.href = "login.html";
 }
-
 
 loadTickets();
