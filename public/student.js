@@ -213,6 +213,63 @@ async function updateTicket(ticketId, action, data, token) {
   }
 }
 
+// Student Ticket Submission
+// Runs when the student clicks "Submit Ticket" on the form in student.html.
+// Sends the new ticket to the backend (POST /api/tickets) and then
+async function submitTicket(event) {
+  event.preventDefault();
+
+  // Get the form and the values the student typed in.
+  const form = document.getElementById("ticket-form");
+  const title = document.getElementById("ticket-title").value.trim();
+  const category = document.getElementById("ticket-category").value.trim();
+  const description = document.getElementById("ticket-description").value.trim();
+
+  if (!title || !category || !description) {
+    alert("Please fill in the title, category, and description.");
+    return;
+  }
+
+  // The JWT is saved in sessionStorage by login.js when the student logs in.
+  // The backend needs it to know which student is creating the ticket.
+  const token = sessionStorage.getItem("token");
+
+  try {
+    // Send the new ticket to the server.
+    // The backend only allows logged-in students to use this route.
+    const response = await fetch("/api/tickets", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      // The backend expects { title, category, description }.
+      // studentId is NOT sent here; the server takes it from the token.
+      body: JSON.stringify({ title, category, description }),
+    });
+
+    // The server replies with the new ticket, or an error message
+    const result = await response.json();
+
+    // response.ok is false for error codes like 400 (missing field)
+    // or 401 (not logged in / token expired)
+    if (!response.ok) {
+      console.error("Ticket submission failed:", result);
+      alert(result.message || "Failed to submit ticket.");
+      return;
+    }
+
+    alert("Ticket submitted successfully.");
+    form.reset();
+    await loadITRequests();
+  } catch (error) {
+    console.error("Error submitting ticket:", error);
+    alert("An error occurred while submitting the ticket.");
+  }
+}
+
+// Connect the form to submitTicket so it runs when the form is submitted
+document.getElementById("ticket-form").addEventListener("submit", submitTicket);
 
 async function logout() {
   // Clear the session storage
