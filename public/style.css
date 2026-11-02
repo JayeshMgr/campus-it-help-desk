@@ -416,3 +416,40 @@ footer {
         padding: 25px 20px;
     }
 }
+
+
+/* =========================
+   Staff Ticket Overview
+   ========================= */
+
+/* Display ticket counts in a row of summary cards */
+#ticket-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Style each ticket count as a separate card */
+#ticket-summary p {
+    background-color: white;
+    border-top: 4px solid #0066cc;
+    border-radius: 6px;
+
+    padding: 20px;
+    margin: 0;
+
+    min-width: 130px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Make the ticket counts stand out */
+#ticket-summary span {
+    display: block;
+    margin-top: 10px;
+
+    font-size: 28px;
+    font-weight: bold;
+    color: #0066cc;
+}

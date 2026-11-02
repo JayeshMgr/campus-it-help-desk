@@ -162,6 +162,27 @@ async function loadTickets() {
     const tickets = await response.json();
     ticketList.textContent = "";
 
+    // Count all tickets based on their status
+    const totalTickets = tickets.length;
+
+    const openTickets = tickets.filter(
+      (ticket) => ticket.status === "Open",
+    ).length;
+
+    const progressTickets = tickets.filter(
+      (ticket) => ticket.status === "In Progress",
+    ).length;
+
+    const closedTickets = tickets.filter(
+      (ticket) => ticket.status === "Closed",
+    ).length;
+
+    // Display the counts on the staff dashboard
+    document.getElementById("total-count").textContent = totalTickets;
+    document.getElementById("open-count").textContent = openTickets;
+    document.getElementById("progress-count").textContent = progressTickets;
+    document.getElementById("closed-count").textContent = closedTickets;
+
     // Show the newest submitted tickets first
     tickets.sort((a, b) => {
       return new Date(b.createdAt) - new Date(a.createdAt);
@@ -171,14 +192,13 @@ async function loadTickets() {
     const selectedStatus = document.getElementById("status-filter").value;
 
     const filteredTickets = tickets.filter((ticket) => {
-      return selectedStatus === "All" || ticket.status === selectedStatus ;
+      return selectedStatus === "All" || ticket.status === selectedStatus;
     });
     // Show a message when no tickets match the selected status
     if (filteredTickets.length === 0) {
       ticketList.textContent = "No tickets found for this status.";
       return;
     }
-
 
     // Display all tickets
     filteredTickets.forEach((ticket) => {
