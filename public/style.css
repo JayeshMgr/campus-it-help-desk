@@ -31,6 +31,12 @@ header h1 {
     margin: 0;
 }
 
+header h1 a,
+header h1 a:hover,
+header h1 a:visited {
+    color: white;
+    text-decoration: none;
+}
 
 /* =========================
    Main Content
