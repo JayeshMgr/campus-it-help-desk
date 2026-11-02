@@ -162,17 +162,40 @@ async function loadTickets() {
     const tickets = await response.json();
     ticketList.textContent = "";
 
-    if (tickets.length === 0) {
-      ticketList.textContent = "No tickets found.";
+    // Show the newest submitted tickets first
+    tickets.sort((a, b) => {
+      return new Date(b.createdAt) - new Date(a.createdAt);
+    });
+
+    // Filter tickets by the selected status
+    const selectedStatus = document.getElementById("status-filter").value;
+
+    const filteredTickets = tickets.filter((ticket) => {
+      return selectedStatus === "All" || ticket.status === selectedStatus ;
+    });
+    // Show a message when no tickets match the selected status
+    if (filteredTickets.length === 0) {
+      ticketList.textContent = "No tickets found for this status.";
       return;
     }
 
+
     // Display all tickets
-    tickets.forEach((ticket) => {
+    filteredTickets.forEach((ticket) => {
       const ticketItem = document.createElement("div");
 
       const title = document.createElement("h3");
       title.textContent = ticket.title;
+
+      // Show which student submitted this ticket
+      const studentEmail = document.createElement("p");
+      studentEmail.textContent = `Submitted by: ${ticket.studentId?.email || "Unknown student"}`;
+      // Show when the student submitted the ticket
+      const submittedDate = document.createElement("p");
+
+      submittedDate.textContent = `Submitted on: ${new Date(
+        ticket.createdAt,
+      ).toLocaleDateString()}`;
 
       const category = document.createElement("p");
       category.textContent = `Category: ${ticket.category}`;
@@ -183,7 +206,14 @@ async function loadTickets() {
       const status = document.createElement("p");
       status.textContent = `Status: ${ticket.status}`;
 
-      ticketItem.append(title, category, description, status);
+      ticketItem.append(
+        title,
+        studentEmail,
+        submittedDate,
+        category,
+        description,
+        status,
+      );
       createTicketControls(ticket, ticketItem, token);
       ticketList.appendChild(ticketItem);
     });
@@ -192,6 +222,9 @@ async function loadTickets() {
     console.error(error);
   }
 }
+
+// Reload tickets when staff selects a different status
+document.getElementById("status-filter").addEventListener("change", loadTickets);
 
 async function logout() {
   // Clear the session storage

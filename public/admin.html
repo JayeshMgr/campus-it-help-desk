@@ -23,6 +23,15 @@
     <!-- /* Temporary testing*/<h1> This laptop isn't working.</h1>
     <button>Problem resovled.</button> -->
     
+    <!-- Filter tickets based on their current status -->
+    <label for="status-filter">Filter by Status:</label>
+    
+    <select id="status-filter">
+        <option value="All">All Tickets</option>
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Closed">Closed</option>
+    </select>
     <div id="ticket-list">
         <p>Loading Tickets...</p>
     </div>
