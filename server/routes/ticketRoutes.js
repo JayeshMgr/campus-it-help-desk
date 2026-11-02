@@ -68,8 +68,8 @@ router.get("/mine", authMiddleware, roleMiddleware("student"), async (req, res) 
 // GET /api/tickets/all  (IT Support Staff only)
 router.get('/all', authMiddleware, roleMiddleware('staff'), async (req, res) => { 
   try {
-    // An empty filter returns every ticket from every student.
-    const tickets = await Ticket.find();
+    // Include the email of the student who submitted each ticket
+    const tickets = await Ticket.find().populate("studentId", "email");
     res.status(200).json(tickets);
   }
   catch (error) { 
