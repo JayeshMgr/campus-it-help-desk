@@ -99,6 +99,13 @@ router.patch(
         });
       }
 
+      // Check whether the ticket ID is valid.
+      if (!mongoose.isValidObjectId(req.params.id)) {
+        return res.status(400).json({
+          message: "Invalid ticket ID",
+        });
+      }
+
         // find ticket by id and update status
         const ticket = await Ticket.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
 
