@@ -1,0 +1,40 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> server@1.0.0 test
+> node --test
+
+✔ Valid JWT permits access and sets req.user (3.4078ms)
+✔ Missing Authorization header is rejected with 401 (0.142ms)
+✔ Malformed Authorization header is rejected with 401 (0.2792ms)
+✔ Invalid JWT is rejected with 401 (0.4483ms)
+✔ Expired JWT is rejected with 401 (0.9113ms)
+✔ Valid credentials return 200 with a JWT (132.2617ms)
+✔ Incorrect password is rejected with 401 (58.2147ms)
+✔ Unknown email is rejected with the same 401 message (0.3747ms)
+✔ Missing credentials are rejected with 400 (0.285ms)
+✔ Returned JWT contains the expected user ID and role (61.088ms)
+✔ Database error returns 500 with a generic message (0.2977ms)
+✔ Valid registration returns 201 with the student role (70.4023ms)
+✔ Missing email or password returns 400 (0.2657ms)
+✔ Duplicate email is rejected and no user is created (0.1427ms)
+✔ Password is hashed before saving (116.0572ms)
+✔ Response does not expose the password (58.907ms)
+✔ Database error returns 500 with a generic message (0.3318ms)
+✔ Staff can access staff-only routes (0.7292ms)
+✔ Student cannot access staff-only routes (0.1497ms)
+✔ Request without user information is denied (0.0999ms)
+✔ Valid ticket passes validation and defaults to Open (5.4298ms)
+✔ Ticket without a title is rejected (0.9998ms)
+✔ Whitespace-only description is rejected (0.6007ms)
+✔ Invalid status is rejected (0.4525ms)
+✔ Valid status values are accepted (0.8102ms)
+✔ Comment containing exactly 2,000 characters is accepted (1.8814ms)
+✔ Comment containing 2,001 characters is rejected (0.8199ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 752.75
