@@ -16,14 +16,19 @@
         <h1>
             <a href="index.html">Campus IT Help Desk</a>
         </h1>
+        <div id="admin-button">
+            <button onclick="logout()">Log out</button>
+        </div>
     </header>
 
     <!-- Main visible content goes here -->
-    <h1>All Submitted IT Support Tickets.</h1>
+    <h1>Submitted IT Support Tickets.</h1>
     <!-- /* Temporary testing*/<h1> This laptop isn't working.</h1>
     <button>Problem resovled.</button> -->
 
     <!-- Summary of all submitted tickets -->
+    <h3>Ticket Overview</h3>
+
     <h3>Ticket Overview</h3>
     
     <div id="ticket-summary">
@@ -34,21 +39,24 @@
     </div>
     
     <!-- Filter tickets based on their current status -->
-    <label for="status-filter">Filter by Status:</label>
     
+   
+    <label for="status-filter">Filter by Status:</label>
     <select id="status-filter">
         <option value="All">All Tickets</option>
         <option value="Open">Open</option>
         <option value="In Progress">In Progress</option>
         <option value="Closed">Closed</option>
     </select>
-    <div id="ticket-list">
-        <p>Loading Tickets...</p>
-    </div>
+
     
+    <div id="ticket-list"> 
+        <p>Loading Tickets...</p>    
+    </div>
+
 
     <!-- Link to your external JavaScript file -->
     <script src="admin.js"></script> 
-    <button onclick="logout()">Log out</button>
+    
 </body>
 </html>
