@@ -421,108 +421,369 @@ footer {
 
 
 /* =========================
-   Staff Ticket Overview
+   Staff Admin Dashboard (scoped to body.admin)
+   Status colors used below:
+   Open = blue, In Progress = orange, Closed = green
    ========================= */
 
-/* Display ticket counts in a row of summary cards */
-#ticket-summary {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 20px 0;
+/* Shorter header with the Log Out button on the right */
+.admin header {
+    padding: 14px 20px;
 }
 
-/* Style each ticket count as a separate card */
-#ticket-summary p {
+.admin header h1 {
+    font-size: 26px;
+}
+
+.admin-logout {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+.admin-logout button {
+    padding: 8px 16px;
+
     background-color: white;
-    border-top: 4px solid #0066cc;
-    border-radius: 6px;
-
-    padding: 20px;
-    margin: 0;
-
-    min-width: 130px;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* Make the ticket counts stand out */
-#ticket-summary span {
-    display: block;
-    margin-top: 10px;
-
-    font-size: 28px;
-    font-weight: bold;
     color: #0066cc;
+
+    font-weight: bold;
 }
 
-/*====================
-admin page
-=====================*/
-.admin main {
+.admin-logout button:hover {
+    background-color: #e8f1fb;
+}
+
+/* Centered page content */
+.admin-container {
     width: auto;
-    max-width: 900px;
-    
-    margin: 40px auto;
+    max-width: 1150px;
+
+    margin: 30px auto;
     padding: 0 20px;
 
     background-color: transparent;
 }
 
-
-
-
-#ticket-list > div {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.admin-section {
+    margin-bottom: 35px;
 }
 
-.ticket-list >
-
-.ticket-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.admin-section h2 {
+    margin: 0 0 15px;
+    font-size: 22px;
 }
 
-.admin-card h2 {
-    margin-top: 0;
-    text-align: center;
-}
-
-
-#admin-button {
-    text-align: right;
-    padding: 12px;
-    background-color: #0066cc;
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: auto;
-    
-}
-
-.admin-button:hover {
-    background-color: #004c99;
-}
-
-#admin-summary {
-    display: flex;
-    flex-direction: row;
+/* Ticket overview: four summary cards in one row */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
+.summary-card {
+    padding: 20px;
+
+    background-color: white;
+    border-top: 4px solid #555555;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    text-align: center;
+}
+
+.summary-label {
+    margin: 0 0 8px;
+
+    font-size: 15px;
+    font-weight: bold;
+    color: #555555;
+}
+
+.summary-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.summary-open {
+    border-top-color: #0066cc;
+}
+
+.summary-open .summary-number {
+    color: #0066cc;
+}
+
+.summary-progress {
+    border-top-color: #d97706;
+}
+
+.summary-progress .summary-number {
+    color: #d97706;
+}
+
+.summary-closed {
+    border-top-color: #2e7d32;
+}
+
+.summary-closed .summary-number {
+    color: #2e7d32;
+}
+
+/* "Submitted Tickets" heading with the status filter beside it */
+.tickets-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 15px;
+}
+
+.tickets-header h2 {
+    margin: 0;
+}
+
+.status-filter label {
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+/* One white card per ticket */
+.ticket-card {
+    position: relative;
+
+    margin-bottom: 20px;
+    padding: 20px 25px;
+
+    background-color: white;
+    border: 1px solid #dddddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    overflow-wrap: break-word;
+}
+
+.ticket-card p {
+    margin: 6px 0;
+}
+
+/* Leave room on the right for the status badge */
+.ticket-title {
+    margin: 0 0 6px;
+    padding-right: 190px;
+
+    font-size: 20px;
+}
+
+.ticket-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 25px;
+
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eeeeee;
+
+    font-size: 14px;
+    color: #666666;
+}
+
+.ticket-meta p {
+    margin: 0;
+}
+
+.ticket-detail strong {
+    color: #555555;
+}
+
+/* Colored status badge in the top-right corner of each ticket */
+.ticket-card .status-badge {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+
+    margin: 0;
+    padding: 4px 12px;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.status-open {
+    background-color: #e8f1fb;
+    color: #0066cc;
+}
+
+.status-in-progress {
+    background-color: #fdf1e2;
+    color: #b45309;
+}
+
+.status-closed {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+/* Comments section inside each ticket */
+.ticket-comments {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #eeeeee;
+}
+
+.ticket-comments h4 {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.ticket-card .comment {
+    margin: 0 0 8px;
+    padding: 8px 12px;
+
+    background-color: #f7f7f7;
+    border-left: 4px solid #999999;
+    border-radius: 4px;
+
+    font-size: 15px;
+}
+
+.comment-author {
+    margin-right: 4px;
+    text-transform: capitalize;
+}
+
+.comment-student {
+    background-color: #f3f7fc;
+    border-left-color: #0066cc;
+}
+
+.comment-staff {
+    background-color: #f4f4f4;
+    border-left-color: #555555;
+}
+
+.comment-resolution {
+    background-color: #edf7ee;
+    border-left-color: #2e7d32;
+}
+
+.comment-reopen {
+    background-color: #fdf3e7;
+    border-left-color: #d97706;
+}
+
+.no-comments {
+    color: #777777;
+    font-style: italic;
+}
+
+/* Status control, comment box, and buttons */
+.ticket-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eeeeee;
+}
+
+.status-control,
+.comment-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-control label {
+    font-weight: bold;
+}
+
+.ticket-actions textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+
+    margin: 15px 0 10px;
+
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.ticket-actions button {
+    padding: 9px 16px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* All three buttons use a 2px border so they line up at the same height */
+.update-button {
+    background-color: #0066cc;
+    border: 2px solid #0066cc;
+}
+
+.update-button:hover {
+    background-color: #004c99;
+    border-color: #004c99;
+}
+
+.comment-button {
+    background-color: white;
+    color: #0066cc;
+    border: 2px solid #0066cc;
+}
+
+.comment-button:hover {
+    background-color: #e8f1fb;
+}
+
+.close-button {
+    background-color: #2e7d32;
+    border: 2px solid #2e7d32;
+}
+
+.close-button:hover {
+    background-color: #1b5e20;
+    border-color: #1b5e20;
+}
+
+/* Tablets: two summary cards per row */
+@media (max-width: 800px) {
+    .summary-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Phones: stack the header and move the badge under the title */
 @media (max-width: 600px) {
-    .admin main {
-        margin: 20px auto;
+    .admin header h1 {
+        font-size: 22px;
     }
 
-    .admin-card {
-        padding: 25px 20px;
+    .admin-logout {
+        position: static;
+        transform: none;
+        margin-top: 8px;
+    }
+
+    .admin-container {
+        margin: 20px auto;
+        padding: 0 12px;
+    }
+
+    .ticket-card {
+        padding: 15px;
+    }
+
+    .ticket-title {
+        padding-right: 0;
+    }
+
+    .ticket-card .status-badge {
+        position: static;
+        display: inline-block;
+        margin-bottom: 8px;
     }
 }
