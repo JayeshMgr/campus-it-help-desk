@@ -9,36 +9,58 @@ function createTicketControls(ticket, ticketItem, token) {
 
   if (ticket.comments && ticket.comments.length > 0) {
     ticket.comments.forEach((comment) => {
-      const commentElement = document.createElement("p");
+      const commentElement = document.createElement("div");
+      commentElement.className = "student-comment";
 
       // If comments are objects, get their text property.
       // If they are strings, display the string directly.
      if (typeof comment === "string") {
   commentElement.textContent = comment;
 } else {
-  const author = comment.authorRole
-    ? `${comment.authorRole}: `
-    : "";
+  // Classes let the CSS color staff/student and resolution/reopen comments.
+  if (comment.authorRole) {
+    commentElement.classList.add(`comment-${comment.authorRole}`);
+  }
 
     let label = "";
 
   if (comment.type === "resolution") {
-    label = "[Resolution] ";
+    label = "Resolution";
+    commentElement.classList.add("comment-resolution");
   } else if (comment.type === "reopen") {
-    label = "[Reopening Explanation] ";
+    label = "Reopening Explanation";
+    commentElement.classList.add("comment-reopen");
   }
 
+  const commentHeader = document.createElement("p");
+  commentHeader.className = "comment-author";
+  commentHeader.textContent = comment.authorRole || "Unknown";
 
-  commentElement.textContent =
-    `${label}${author}${comment.text}`;
+  if (label) {
+    const typeLabel = document.createElement("span");
+    typeLabel.className = "comment-type";
+    typeLabel.textContent = label;
+    commentHeader.appendChild(typeLabel);
+  }
+
+  const commentText = document.createElement("p");
+  commentText.className = "comment-text";
+  commentText.textContent = comment.text;
+
+  commentElement.append(commentHeader, commentText);
 }
       ticketItem.appendChild(commentElement);
     });
   } else {
     const noComments = document.createElement("p");
+    noComments.className = "no-comments";
     noComments.textContent = "No comments yet.";
     ticketItem.appendChild(noComments);
   }
+
+  // Wrapper so the textarea and button line up together
+  const controls = document.createElement("div");
+  controls.className = "student-ticket-controls";
 
   // Do not show controls for closed tickets
  // Closed tickets get a Reopen Ticket form.
@@ -71,11 +93,12 @@ if (ticket.status === "Closed") {
     );
   });
 
-  ticketItem.append(
+  controls.append(
     reopenHeading,
     reopenExplanation,
     reopenButton
   );
+  ticketItem.appendChild(controls);
 
   return;
 }
@@ -108,10 +131,11 @@ if (ticket.status === "Closed") {
 
 
 
-  ticketItem.append(
+  controls.append(
     commentInput,
     addCommentButton
   );
+  ticketItem.appendChild(controls);
 }
 
 async function loadITRequests() {
@@ -150,20 +174,36 @@ async function loadITRequests() {
     // Display each matching IT request
     studentRequests.forEach((request) => {
       const requestItem = document.createElement("div");
+      requestItem.className = "student-ticket";
+
+      // Title and status badge share one row at the top of the card
+      const ticketHeader = document.createElement("div");
+      ticketHeader.className = "student-ticket-header";
 
       const title = document.createElement("h3");
       title.textContent = request.title;
 
+      // e.g. "In Progress" -> "status-in-progress"
+      const status = document.createElement("span");
+      const statusClass = request.status.toLowerCase().replace(" ", "-");
+      status.className = `status-badge status-${statusClass}`;
+      status.textContent = request.status;
+
+      ticketHeader.append(title, status);
+
       const category = document.createElement("p");
-      category.textContent = `Category: ${request.category}`;
+      category.className = "student-ticket-detail";
+      const categoryLabel = document.createElement("strong");
+      categoryLabel.textContent = "Category: ";
+      category.append(categoryLabel, request.category);
 
       const description = document.createElement("p");
-      description.textContent = `Description: ${request.description}`;
+      description.className = "student-ticket-detail";
+      const descriptionLabel = document.createElement("strong");
+      descriptionLabel.textContent = "Description: ";
+      description.append(descriptionLabel, request.description);
 
-      const status = document.createElement("p");
-      status.textContent = `Status: ${request.status}`;
-
-      requestItem.append(title, category, description, status);
+      requestItem.append(ticketHeader, category, description);
       createTicketControls(request, requestItem, token);
       requestList.appendChild(requestItem);
     });
