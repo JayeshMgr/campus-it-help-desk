@@ -18,6 +18,10 @@
         <h1>
             <a href="index.html">Campus IT Help Desk</a>
         </h1>
+        
+        <div id="student-button">
+            <button onclick="logout()">Log out</button>
+        </div>
     </header>
 
     <!-- FR-03: Form for students to submit a new IT ticket -->
@@ -26,17 +30,34 @@
 
         <!-- All fields are required (FR-10) -->
         <form id="ticket-form">
+
+        <div>
             <label for="ticket-title">Title</label>
+        </div>
+
+        <div>
             <input type="text" id="ticket-title" name="title" required>
+        </div>
 
+        <div>
             <label for="ticket-category">Category</label>
+        </div>
+
+        <div>
             <input type="text" id="ticket-category" name="category" required>
+        </div>
 
+        <div>
             <label for="ticket-description">Problem Description</label>
-            <textarea id="ticket-description" name="description" rows="4" required></textarea>
+        </div>
 
-            <button type="submit">Submit Ticket</button>
+        <div>
+            <textarea id="ticket-description" name="description" rows="4" required></textarea>
+        </div>
+
+            
         </form>
+        <button type="submit">Submit Ticket</button>
     </section>
 
     <section class="student-card">
@@ -46,6 +67,7 @@
        <div id="request-list">
             <p>Loading Tickets...</p>
         </div>
+        
     </section>
 
 
@@ -56,6 +78,6 @@
     <iframe id="nr-ext-rsicon" style="position: absolute; display: none; width: 50px; height: 50px; 
     z-index: 2147483647; border-style: none; background: transparent;"></iframe>
 
-    <button onclick="logout()">Log out</button>
+    
 </body>
 </html>
