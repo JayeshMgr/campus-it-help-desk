@@ -9,7 +9,7 @@ function createTicketControls(ticket, ticketItem, token) {
 
   if (ticket.comments && ticket.comments.length > 0) {
     ticket.comments.forEach((comment) => {
-      const commentElement = document.createElement("p");
+      const commentElement = document.createElement("div");
       commentElement.className = "comment";
 
       // If comments are objects, get their text property.
@@ -18,16 +18,14 @@ function createTicketControls(ticket, ticketItem, token) {
         // Support older comments stored as plain strings.
         commentElement.textContent = comment;
       } else {
-        const author = comment.authorRole ? `${comment.authorRole}: ` : "";
-
         let label = "";
 
         // The extra class gives each kind of comment its own color
         if (comment.type === "resolution") {
-          label = "[Resolution] ";
+          label = "Resolution";
           commentElement.className = "comment comment-resolution";
         } else if (comment.type === "reopen") {
-          label = "[Reopening Explanation] ";
+          label = "Reopening Explanation";
           commentElement.className = "comment comment-reopen";
         } else if (comment.authorRole === "staff") {
           commentElement.className = "comment comment-staff";
@@ -35,12 +33,20 @@ function createTicketControls(ticket, ticketItem, token) {
           commentElement.className = "comment comment-student";
         }
 
-        // Show the label and author in bold, followed by the comment text
-        const authorElement = document.createElement("strong");
+        // Author line with an optional label, matching the student dashboard
+        const authorElement = document.createElement("p");
         authorElement.className = "comment-author";
-        authorElement.textContent = `${label}${author}`;
+        authorElement.textContent = comment.authorRole || "Unknown";
 
-        const textElement = document.createElement("span");
+        if (label) {
+          const typeLabel = document.createElement("span");
+          typeLabel.className = "comment-type";
+          typeLabel.textContent = label;
+          authorElement.appendChild(typeLabel);
+        }
+
+        const textElement = document.createElement("p");
+        textElement.className = "comment-text";
         textElement.textContent = comment.text;
 
         commentElement.append(authorElement, textElement);

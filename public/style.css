@@ -859,23 +859,27 @@ footer {
     font-size: 16px;
 }
 
+/* Same look as student comments: author line on top, comment text below */
 .ticket-card .comment {
     margin: 0 0 8px;
     padding: 8px 12px;
 
     border-radius: 4px;
-
-    font-size: 15px;
 }
 
 /* Default comment colors; the shared section below sets role colors */
 .comment {
     background-color: var(--color-page);
-    border-left: 4px solid var(--color-input-border);
+    border-left: 3px solid var(--color-input-border);
 }
 
+/* Override the general .ticket-card p margin inside comments */
 .ticket-card .comment-author {
-    margin-right: 4px;
+    margin: 0 0 2px;
+}
+
+.ticket-card .comment-text {
+    margin: 0;
 }
 
 /* Status control, comment box, and buttons */
