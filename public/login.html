@@ -11,7 +11,7 @@
     <!-- Link to your external CSS stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="login">
 
     <header>
         <h1>
@@ -20,27 +20,31 @@
     </header>
 
     <main>
-        <h2>Login</h2>
-        <p>Students and IT Support Staff sign in here.</p>
+        <section class="login-card">
+            <h2>Login</h2>
+            <p class="login-intro">Students and IT Support Staff sign in here.</p>
 
-        <form id="loginForm">
-            <p>
-                <label for="email">Email</label><br>
-                <input type="email" id="email" name="email" required>
-            </p>
+            <form id="loginForm">
+                <div class="login-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
 
-            <p>
-                <label for="password">Password</label><br>
-                <input type="password" id="password" name="password" required>
-            </p>
+                <div class="login-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
 
-            <p id="errorMessage" style="color: #cc0000;"></p>
+                <p id="errorMessage" class="login-error"></p>
 
-            <button type="submit" id="loginButton">Login</button>
-        </form>
+                <button type="submit" id="loginButton" class="login-button">Login</button>
+            </form>
 
-        <p>Don't have an account? <a href="register.html">Register as a student</a></p>
-        <p><a href="index.html">Back to homepage</a></p>
+            <div class="login-links">
+                <p>Don't have an account? <a href="register.html">Register as a student</a></p>
+                <p><a href="index.html">Back to homepage</a></p>
+            </div>
+        </section>
     </main>
 
     <script src="login.js"></script>

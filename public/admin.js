@@ -1,12 +1,16 @@
 function createTicketControls(ticket, ticketItem, token) {
-  // Display existing comments
+  // Display existing comments in their own section of the ticket card
+  const commentsSection = document.createElement("div");
+  commentsSection.className = "ticket-comments";
+
   const commentsHeading = document.createElement("h4");
   commentsHeading.textContent = "Comments";
-  ticketItem.appendChild(commentsHeading);
+  commentsSection.appendChild(commentsHeading);
 
   if (ticket.comments && ticket.comments.length > 0) {
     ticket.comments.forEach((comment) => {
-      const commentElement = document.createElement("p");
+      const commentElement = document.createElement("div");
+      commentElement.className = "comment";
 
       // If comments are objects, get their text property.
       // If they are strings, display the string directly.
@@ -14,29 +18,65 @@ function createTicketControls(ticket, ticketItem, token) {
         // Support older comments stored as plain strings.
         commentElement.textContent = comment;
       } else {
-        const author = comment.authorRole ? `${comment.authorRole}: ` : "";
-
         let label = "";
 
+        // The extra class gives each kind of comment its own color
         if (comment.type === "resolution") {
-          label = "[Resolution] ";
+          label = "Resolution";
+          commentElement.className = "comment comment-resolution";
         } else if (comment.type === "reopen") {
-          label = "[Reopening Explanation] ";
+          label = "Reopening Explanation";
+          commentElement.className = "comment comment-reopen";
+        } else if (comment.authorRole === "staff") {
+          commentElement.className = "comment comment-staff";
+        } else {
+          commentElement.className = "comment comment-student";
         }
 
-        commentElement.textContent = `${label}${author}${comment.text}`;
+        // Author line with an optional label, matching the student dashboard
+        const authorElement = document.createElement("p");
+        authorElement.className = "comment-author";
+        authorElement.textContent = comment.authorRole || "Unknown";
+
+        if (label) {
+          const typeLabel = document.createElement("span");
+          typeLabel.className = "comment-type";
+          typeLabel.textContent = label;
+          authorElement.appendChild(typeLabel);
+        }
+
+        const textElement = document.createElement("p");
+        textElement.className = "comment-text";
+        textElement.textContent = comment.text;
+
+        commentElement.append(authorElement, textElement);
       }
 
-      ticketItem.appendChild(commentElement);
+      commentsSection.appendChild(commentElement);
     });
   } else {
     const noComments = document.createElement("p");
+    noComments.className = "no-comments";
     noComments.textContent = "No comments yet.";
-    ticketItem.appendChild(noComments);
+    commentsSection.appendChild(noComments);
   }
 
+  ticketItem.appendChild(commentsSection);
+
+  // Group the status control, comment box, and buttons together
+  const actions = document.createElement("div");
+  actions.className = "ticket-actions";
+
   // Let staff change the ticket status
+  const statusRow = document.createElement("div");
+  statusRow.className = "status-control";
+
+  const statusLabel = document.createElement("label");
+  statusLabel.textContent = "Change status:";
+  statusLabel.htmlFor = `status-${ticket._id}`;
+
   const statusSelect = document.createElement("select");
+  statusSelect.id = `status-${ticket._id}`;
 
   ["Open", "In Progress", "Closed"].forEach((value) => {
     const option = document.createElement("option");
@@ -50,6 +90,7 @@ function createTicketControls(ticket, ticketItem, token) {
 
   // Button to save the new status
   const updateStatusButton = document.createElement("button");
+  updateStatusButton.className = "update-button";
   updateStatusButton.textContent = "Update Status";
 
   updateStatusButton.addEventListener("click", async () => {
@@ -61,7 +102,9 @@ function createTicketControls(ticket, ticketItem, token) {
     );
   });
 
-  ticketItem.append(statusSelect, updateStatusButton);
+  statusRow.append(statusLabel, statusSelect, updateStatusButton);
+  actions.appendChild(statusRow);
+  ticketItem.appendChild(actions);
 
   // Do not show controls for closed tickets
   if (ticket.status === "Closed") {
@@ -76,6 +119,7 @@ function createTicketControls(ticket, ticketItem, token) {
 
   // Add Comment button
   const addCommentButton = document.createElement("button");
+  addCommentButton.className = "comment-button";
   addCommentButton.textContent = "Add Comment";
 
   addCommentButton.addEventListener("click", async () => {
@@ -91,6 +135,7 @@ function createTicketControls(ticket, ticketItem, token) {
 
   // Close Ticket button
   const closeButton = document.createElement("button");
+  closeButton.className = "close-button";
   closeButton.textContent = "Close Ticket";
 
   closeButton.addEventListener("click", async () => {
@@ -108,7 +153,26 @@ function createTicketControls(ticket, ticketItem, token) {
     await updateTicket(ticket._id, "/resolve", { comment }, token);
   });
 
-  ticketItem.append(commentInput, addCommentButton, closeButton);
+  const commentButtons = document.createElement("div");
+  commentButtons.className = "comment-buttons";
+  commentButtons.append(addCommentButton, closeButton);
+
+  actions.append(commentInput, commentButtons);
+}
+
+// Create a "Label: value" line for a ticket, with the label in bold
+function createTicketDetail(label, value) {
+  const detail = document.createElement("p");
+  detail.className = "ticket-detail";
+
+  const labelElement = document.createElement("strong");
+  labelElement.textContent = `${label}: `;
+
+  const valueElement = document.createElement("span");
+  valueElement.textContent = value;
+
+  detail.append(labelElement, valueElement);
+  return detail;
 }
 
 // Send a comment or resolution note to the backend
@@ -203,9 +267,20 @@ async function loadTickets() {
     // Display all tickets
     filteredTickets.forEach((ticket) => {
       const ticketItem = document.createElement("div");
+      ticketItem.className = "ticket-card";
 
       const title = document.createElement("h3");
+      title.className = "ticket-title";
       title.textContent = ticket.title;
+
+      // Colored status badge, e.g. "In Progress" gets the class "status-in-progress"
+      const status = document.createElement("p");
+      status.className = `status-badge status-${ticket.status.toLowerCase().replace(" ", "-")}`;
+      status.textContent = `Status: ${ticket.status}`;
+
+      // Submitted by / submitted on, shown together under the title
+      const ticketMeta = document.createElement("div");
+      ticketMeta.className = "ticket-meta";
 
       // Show which student submitted this ticket
       const studentEmail = document.createElement("p");
@@ -217,23 +292,12 @@ async function loadTickets() {
         ticket.createdAt,
       ).toLocaleDateString()}`;
 
-      const category = document.createElement("p");
-      category.textContent = `Category: ${ticket.category}`;
+      ticketMeta.append(studentEmail, submittedDate);
 
-      const description = document.createElement("p");
-      description.textContent = `Description: ${ticket.description}`;
+      const category = createTicketDetail("Category", ticket.category);
+      const description = createTicketDetail("Description", ticket.description);
 
-      const status = document.createElement("p");
-      status.textContent = `Status: ${ticket.status}`;
-
-      ticketItem.append(
-        title,
-        studentEmail,
-        submittedDate,
-        category,
-        description,
-        status,
-      );
+      ticketItem.append(title, status, ticketMeta, category, description);
       createTicketControls(ticket, ticketItem, token);
       ticketList.appendChild(ticketItem);
     });
