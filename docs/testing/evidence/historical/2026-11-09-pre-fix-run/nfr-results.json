@@ -1,0 +1,215 @@
+{
+  "generatedAt": "2026-11-09T17:38:18.951Z",
+  "environment": {
+    "os": "Windows 11 Pro (10.0.26300, x64)",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz x 16",
+    "memoryGB": 16,
+    "node": "v25.9.0",
+    "database": "Local MongoDB on 127.0.0.1 (isolated test database)",
+    "chrome": "156.0.8078.81",
+    "edge": "157.0.4341.42"
+  },
+  "performance": {
+    "api": {
+      "login": {
+        "runs": 10,
+        "minMs": 57.5,
+        "medianMs": 58.4,
+        "maxMs": 59.6,
+        "allMs": [
+          59.6,
+          58.6,
+          58.5,
+          57.6,
+          57.9,
+          58.5,
+          57.5,
+          58,
+          58,
+          58.4
+        ],
+        "withinLimit": true
+      },
+      "submitTicket": {
+        "runs": 10,
+        "minMs": 2.1,
+        "medianMs": 2.2,
+        "maxMs": 5.5,
+        "allMs": [
+          5.5,
+          3.1,
+          2.6,
+          2.2,
+          2.1,
+          2.1,
+          2.1,
+          2.2,
+          2.1,
+          2.6
+        ],
+        "withinLimit": true
+      },
+      "viewOwnTickets": {
+        "runs": 10,
+        "minMs": 1.7,
+        "medianMs": 1.8,
+        "maxMs": 3.2,
+        "allMs": [
+          3.2,
+          2.5,
+          1.8,
+          1.8,
+          1.8,
+          1.7,
+          1.7,
+          1.9,
+          1.8,
+          2.4
+        ],
+        "withinLimit": true
+      },
+      "staffViewAll": {
+        "runs": 10,
+        "minMs": 2.4,
+        "medianMs": 2.6,
+        "maxMs": 6.2,
+        "allMs": [
+          6.2,
+          2.9,
+          2.5,
+          2.6,
+          2.6,
+          2.5,
+          2.6,
+          2.4,
+          2.7,
+          3.3
+        ],
+        "withinLimit": true
+      }
+    },
+    "browser": {
+      "loginToDashboard": {
+        "runs": 5,
+        "minMs": 129,
+        "medianMs": 132.7,
+        "maxMs": 468.9,
+        "allMs": [
+          468.9,
+          130.9,
+          129,
+          133.8,
+          132.7
+        ],
+        "withinLimit": true
+      },
+      "submitTicketUntilListed": {
+        "runs": 5,
+        "minMs": 43.9,
+        "medianMs": 57.5,
+        "maxMs": 96.9,
+        "allMs": [
+          96.9,
+          48.8,
+          65.4,
+          57.5,
+          43.9
+        ],
+        "withinLimit": true
+      },
+      "openDashboardUntilListed": {
+        "runs": 5,
+        "minMs": 35.5,
+        "medianMs": 38,
+        "maxMs": 45.3,
+        "allMs": [
+          37.6,
+          38,
+          45.3,
+          38.6,
+          35.5
+        ],
+        "withinLimit": true
+      }
+    }
+  },
+  "reliability": {
+    "ticketsBeforeRestart": 16,
+    "ticketsAfterRestart": 16,
+    "sameTicketIds": true,
+    "serverStoppedPortClosed": true,
+    "apiUnreachableWhileStopped": true,
+    "processIdsDiffer": true,
+    "checkedTicket": {
+      "status": "Closed",
+      "resolutionNotePresent": true,
+      "loginAfterRestart": "200 OK"
+    }
+  },
+  "security": [
+    {
+      "probe": "student GET /api/tickets/all",
+      "expected": 403,
+      "actualStatus": 403,
+      "actualMessage": "Access denied. Insufficient permissions"
+    },
+    {
+      "probe": "student PATCH /api/tickets/:id/status",
+      "expected": 403,
+      "actualStatus": 403,
+      "actualMessage": "Access denied. Insufficient permissions"
+    },
+    {
+      "probe": "student PATCH /api/tickets/:id/resolve",
+      "expected": 403,
+      "actualStatus": 403,
+      "actualMessage": "Access denied. Insufficient permissions"
+    },
+    {
+      "probe": "tampered role claim on GET /all",
+      "expected": 401,
+      "actualStatus": 401,
+      "actualMessage": "Invalid or expired token"
+    },
+    {
+      "probe": "alg:none token on GET /all",
+      "expected": 401,
+      "actualStatus": 401,
+      "actualMessage": "Invalid or expired token"
+    },
+    {
+      "probe": "login with email {$ne:null}",
+      "expected": "no token (401)",
+      "actualStatus": 401,
+      "actualMessage": "Invalid credentials"
+    },
+    {
+      "probe": "other student GET /mine contains owner's ticket?",
+      "expected": "200 with 0 of owner's tickets",
+      "actualStatus": 200,
+      "actualMessage": "0 tickets returned"
+    },
+    {
+      "probe": "other student reopen",
+      "expected": 404,
+      "actualStatus": 404,
+      "actualMessage": "Closed ticket not found or you do not have permission to reopen it."
+    },
+    {
+      "probe": "other student comment",
+      "expected": 404,
+      "actualStatus": 404,
+      "actualMessage": "Ticket not found or commenting not allowed"
+    },
+    {
+      "probe": "password/hash in GET /all or login responses",
+      "expected": "none",
+      "actualStatus": "none found",
+      "actualMessage": null
+    }
+  ],
+  "compatibility": {
+    "edgeSmoke": "PASS",
+    "chromeFullSystemSuite": "See system-test-output.txt"
+  }
+}

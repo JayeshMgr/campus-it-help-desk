@@ -26,32 +26,41 @@ The backend will use the following technologies:
 
 The backend follows a simple layered structure to keep the project organized and make each part easier to maintain.
 
-- `config/` stores configuration code such as the MongoDB connection.
-- `controllers/` will contain the main logic for handling requests.
-- `middlewares/` contains authentication and role-checking logic.
-- `models/` will define the MongoDB data structures.
-- `routes/` will define the API endpoints.
-- `utils/` will contain reusable helper functions if needed.
-- `app.js` configures the Express application and middleware.
+- `config/` stores configuration code such as the MongoDB connection (`db.js`).
+- `controllers/` contains `authController.js`, which holds the registration and login logic (`registerUser`, `loginUser`).
+- `middlewares/` contains authentication (`authMiddleware.js`) and role-checking (`roleMiddleware.js`) logic.
+- `models/` defines the MongoDB data structures (`User.js`, `Ticket.js`), including field validation.
+- `routes/` defines the API endpoints. `authRoutes.js` maps the auth endpoints to `authController.js`. `ticketRoutes.js` defines the ticket endpoints and contains the ticket request logic directly in its route handlers; there is no separate ticket controller.
+- `app.js` configures the Express application, mounts the API routes, and serves the frontend files from `public/`.
 - `server.js` connects to MongoDB and starts the backend server.
+
+There is no `utils/` folder; the project does not currently have shared helper functions.
 
 
 ## 4. Backend Communication Flow
 
-The frontend and backend will communicate using HTTP requests through REST API endpoints.
+The frontend is built with vanilla HTML, CSS, and JavaScript (no framework such as React). Its files are in `public/` and are served by the same Express app. The frontend and backend communicate using HTTP requests (`fetch`) to REST API endpoints.
 
-The general request flow will be:
+The request flow for authentication is:
 
 Frontend (HTML/CSS/JavaScript)
-→ Express Route
-→ Middleware if required
-→ Controller
+→ Express Route (`authRoutes.js`)
+→ Controller (`authController.js`)
 → Mongoose Model
-→ MongoDB Atlas
+→ MongoDB
 
-The backend will return JSON responses to the frontend.
+The request flow for tickets is:
 
-For example, when a student submits a support ticket, the React frontend will send the ticket data to an Express API endpoint. The backend will process the request and store the ticket in MongoDB.
+Frontend (HTML/CSS/JavaScript)
+→ Express Route (`ticketRoutes.js`)
+→ `authMiddleware` and `roleMiddleware`
+→ Route handler in `ticketRoutes.js`
+→ Mongoose Model
+→ MongoDB
+
+The backend returns JSON responses to the frontend.
+
+For example, when a student submits a support ticket, `public/student.js` sends the ticket data to `POST /api/tickets`. The backend checks the student's token and role, then stores the ticket in MongoDB.
 
 
 ## 5. Database Connection Design
@@ -125,4 +134,21 @@ This middleware checks whether the authenticated user's role is permitted to acc
 
 Students register through the registration API and receive the default `student` role. IT Support Staff accounts are created administratively with the `staff` role. Both roles use the same login endpoint.
 
-The authentication and role-checking middleware have been tested using temporary protected routes in Postman. These middleware functions will be applied to the appropriate student and staff ticket endpoints as those features are implemented.
+The authentication and role-checking middleware are applied to every ticket endpoint (see Section 9).
+
+
+## 9. Ticket API Design
+
+All ticket endpoints are defined in `server/routes/ticketRoutes.js` and mounted at `/api/tickets`. Every endpoint requires a valid JWT.
+
+| Endpoint | Allowed role | Purpose |
+| -------- | ------------ | ------- |
+| `POST /api/tickets` | Student | Submit a new ticket (owner taken from the JWT) |
+| `GET /api/tickets/mine` | Student | View the logged-in student's own tickets |
+| `GET /api/tickets/all` | Staff | View all tickets, with the submitting student's email |
+| `PATCH /api/tickets/:id/status` | Staff | Change a ticket's status (Open, In Progress, Closed) |
+| `POST /api/tickets/:id/comments` | Student, Staff | Add a comment (students: only their own non-Closed tickets) |
+| `PATCH /api/tickets/:id/resolve` | Staff | Close a ticket with a resolution note |
+| `PATCH /api/tickets/:id/reopen` | Student | Reopen the student's own Closed ticket with a required explanation |
+
+Routes that take a ticket ID return 400 for a malformed ID and 404 when no matching ticket is found.

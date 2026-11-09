@@ -1,0 +1,103 @@
+﻿Command: npm run test:integration
+Run started: 2026-11-09T15:10:28.9341216-06:00
+Branch: testing/milestone3-final  Base commit: cb57f90 (+ uncommitted DEF-02 fix and maintainability fixes M-01, M-02, M-04, M-06, M-08)
+Database: local isolated test database (Atlas and server/.env not used)
+
+
+> server@1.0.0 test:integration
+> node --test --test-concurrency=1 tests/integration/*.test.js
+
+▶ INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB)
+  ✔ INT-01a valid registration creates a student account with a hashed password (196.7258ms)
+  ✔ INT-01b missing email or password is rejected and no account is created (21.6752ms)
+  ✔ INT-01c duplicate email is rejected and only one account exists (11.13ms)
+  ✔ INT-01d a role supplied in the request body is ignored (no self-registration as staff) (193.3798ms)
+✔ INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB) (494.1672ms)
+▶ INT-02 Authentication (login -> JWT -> authMiddleware on protected routes)
+  ✔ INT-02a student login returns a valid signed JWT with the correct user ID and role (193.5791ms)
+  ✔ INT-02b staff login returns a token with the staff role (62.4775ms)
+  ✔ INT-02c wrong password and unknown email both return 401 with the same message and no token (65.829ms)
+  ✔ INT-02d a valid token is accepted on a protected endpoint (5.3638ms)
+  ✔ INT-02e missing, malformed, forged, and expired tokens are rejected with 401 (12.0179ms)
+✔ INT-02 Authentication (login -> JWT -> authMiddleware on protected routes) (339.7999ms)
+▶ INT-03 Student ticket submission (POST /api/tickets -> Ticket model)
+  ✔ INT-03a authenticated student submits a ticket; it is persisted with the student's ID and status Open (15.9326ms)
+  ✔ INT-03b studentId and status in the request body are ignored (owner comes from the JWT) (5.4336ms)
+  ✔ INT-03c missing or whitespace-only required fields are rejected and nothing is saved (12.7136ms)
+  ✔ INT-03d staff cannot submit student tickets (403) and anonymous users get 401 (5.0317ms)
+✔ INT-03 Student ticket submission (POST /api/tickets -> Ticket model) (39.4634ms)
+▶ INT-04 Student ticket retrieval (GET /api/tickets/mine)
+  ✔ INT-04a each student receives only their own tickets (11.2513ms)
+  ✔ INT-04b a student with no tickets receives an empty list (4.9383ms)
+  ✔ INT-04c staff token on the student-only /mine route is rejected with 403 (1.097ms)
+✔ INT-04 Student ticket retrieval (GET /api/tickets/mine) (17.6222ms)
+▶ INT-05 Staff ticket retrieval (GET /api/tickets/all with populate)
+  ✔ INT-05a staff receive tickets from multiple students with the owner's email and no password (12.9932ms)
+  ✔ INT-05b students cannot use the staff /all route (403, no ticket data) (1.3124ms)
+✔ INT-05 Staff ticket retrieval (GET /api/tickets/all with populate) (14.4396ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ INT-06 Ticket status management (PATCH /api/tickets/:id/status)
+  ✔ INT-06a staff change Open -> In Progress; the change persists and the student sees it (12.2467ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-06b staff change In Progress -> Closed; the change persists and the student sees it (7.166ms)
+  ✔ INT-06c invalid or missing status values are rejected and the status is unchanged (6.1238ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-06d malformed ticket ID returns 400 and an unknown valid ID returns 404 (3.0449ms)
+  ✔ INT-06e students cannot change ticket status (403) and the status is unchanged (1.9125ms)
+✔ INT-06 Ticket status management (PATCH /api/tickets/:id/status) (39.0239ms)
+▶ INT-07 Resolution notes (PATCH /api/tickets/:id/resolve)
+  ✔ INT-07a empty, whitespace-only, and 2,001-character notes are rejected; ticket stays open (6.8179ms)
+  ✔ INT-07b students cannot resolve tickets (403) (3.7846ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-07c staff resolve with a note: status becomes Closed and the note is stored as a resolution (7.0594ms)
+  ✔ INT-07d the ticket owner can read the resolution note through /mine (2.3049ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-07e a note of exactly 2,000 characters is accepted (upper boundary) (9.655ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-07f resolving an already Closed ticket returns 404 and adds no second note (3.7704ms)
+✔ INT-07 Resolution notes (PATCH /api/tickets/:id/resolve) (36.8532ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+▶ INT-08 Reopening (PATCH /api/tickets/:id/reopen)
+  ✔ INT-08a reopening without an explanation is rejected and the ticket stays Closed (7.9385ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-08b another student cannot reopen the ticket (404) and it stays Closed (5.7561ms)
+  ✔ INT-08c staff cannot use the student reopen route (403); anonymous request gets 401 (2.9353ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-08d a ticket that is not Closed cannot be reopened (404) (5.7997ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-08e the owner reopens their Closed ticket: status becomes Open and the explanation is stored (5.7176ms)
+  ✔ INT-08f a malformed ticket ID returns 400 like the other ticket routes (1.5286ms)
+✔ INT-08 Reopening (PATCH /api/tickets/:id/reopen) (40.2835ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+▶ INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules
+  ✔ INT-09a a student can comment on their own non-Closed ticket (4.9823ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-09b staff can comment on any student's ticket and the owner sees the comment (7.3234ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-09c a student cannot comment on another student's ticket (404, nothing added) (6.1845ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-09d a student cannot comment on their own Closed ticket (404) (9.7656ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-09e staff can still comment on a Closed ticket (current backend rule) (5.117ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  ✔ INT-09f comment length: empty, whitespace, and 2,001 characters rejected; 1 and 2,000 accepted (13.2433ms)
+  ✔ INT-09g malformed ticket ID returns 400; missing token returns 401 (3.4945ms)
+✔ INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules (59.4671ms)
+(node:16184) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+▶ INT-10 Staff status filtering and overview data (GET /api/tickets/all)
+  ✔ INT-10a per-status counts from the API equal the database counts and sum to the total (10.9224ms)
+  ✔ INT-10b the API always returns the full set; a status query parameter does not shrink the totals (9.5596ms)
+✔ INT-10 Staff status filtering and overview data (GET /api/tickets/all) (24.6323ms)
+ℹ tests 44
+ℹ suites 10
+ℹ pass 44
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1789.701
+
+Exit code: 0   Wall time: 2.5 s

@@ -1,0 +1,179 @@
+﻿Command: node --test --test-concurrency=1 --experimental-test-coverage tests/integration/*.test.js
+Run started: 2026-11-09T11:34:06.1729730-06:00
+Type: REAL DATABASE integration (local MongoDB 8.2, database campus_it_help_desk_m3final_int_test, dropped before/after). Atlas and server/.env not used.
+Node: v25.9.0
+Branch: testing/milestone3-final  Base commit: cb57f90
+
+Γû╢ INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB)
+  Γ£ö INT-01a valid registration creates a student account with a hashed password (249.3023ms)
+  Γ£ö INT-01b missing email or password is rejected and no account is created (19.0198ms)
+  Γ£ö INT-01c duplicate email is rejected and only one account exists (12.6255ms)
+  Γ£ö INT-01d a role supplied in the request body is ignored (no self-registration as staff) (254.7008ms)
+Γ£ö INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB) (605.7422ms)
+Γû╢ INT-02 Authentication (login -> JWT -> authMiddleware on protected routes)
+  Γ£ö INT-02a student login returns a valid signed JWT with the correct user ID and role (256.6122ms)
+  Γ£ö INT-02b staff login returns a token with the staff role (84.0606ms)
+  Γ£ö INT-02c wrong password and unknown email both return 401 with the same message and no token (85.4837ms)
+  Γ£ö INT-02d a valid token is accepted on a protected endpoint (4.2689ms)
+  Γ£ö INT-02e missing, malformed, forged, and expired tokens are rejected with 401 (11.2484ms)
+Γ£ö INT-02 Authentication (login -> JWT -> authMiddleware on protected routes) (442.0962ms)
+Γû╢ INT-03 Student ticket submission (POST /api/tickets -> Ticket model)
+  Γ£ö INT-03a authenticated student submits a ticket; it is persisted with the student's ID and status Open (12.3468ms)
+  Γ£ö INT-03b studentId and status in the request body are ignored (owner comes from the JWT) (2.7818ms)
+  Γ£ö INT-03c missing or whitespace-only required fields are rejected and nothing is saved (8.501ms)
+  Γ£ö INT-03d staff cannot submit student tickets (403) and anonymous users get 401 (4.051ms)
+Γ£ö INT-03 Student ticket submission (POST /api/tickets -> Ticket model) (27.9309ms)
+Γû╢ INT-04 Student ticket retrieval (GET /api/tickets/mine)
+  Γ£ö INT-04a each student receives only their own tickets (11.0847ms)
+  Γ£ö INT-04b a student with no tickets receives an empty list (3.219ms)
+  Γ£ö INT-04c staff token on the student-only /mine route is rejected with 403 (1.1459ms)
+Γ£ö INT-04 Student ticket retrieval (GET /api/tickets/mine) (15.6366ms)
+Γû╢ INT-05 Staff ticket retrieval (GET /api/tickets/all with populate)
+  Γ£ö INT-05a staff receive tickets from multiple students with the owner's email and no password (9.8819ms)
+  Γ£ö INT-05b students cannot use the staff /all route (403, no ticket data) (1.2853ms)
+Γ£ö INT-05 Staff ticket retrieval (GET /api/tickets/all with populate) (11.3024ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Γû╢ INT-06 Ticket status management (PATCH /api/tickets/:id/status)
+  Γ£ö INT-06a staff change Open -> In Progress; the change persists and the student sees it (8.7041ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-06b staff change In Progress -> Closed; the change persists and the student sees it (5.1296ms)
+  Γ£ö INT-06c invalid or missing status values are rejected and the status is unchanged (4.7192ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-06d malformed ticket ID returns 400 and an unknown valid ID returns 404 (3.019ms)
+  Γ£ö INT-06e students cannot change ticket status (403) and the status is unchanged (2.1439ms)
+Γ£ö INT-06 Ticket status management (PATCH /api/tickets/:id/status) (26.4032ms)
+Γû╢ INT-07 Resolution notes (PATCH /api/tickets/:id/resolve)
+  Γ£ö INT-07a empty, whitespace-only, and 2,001-character notes are rejected; ticket stays open (6.2942ms)
+  Γ£ö INT-07b students cannot resolve tickets (403) (2.0897ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-07c staff resolve with a note: status becomes Closed and the note is stored as a resolution (5.0274ms)
+  Γ£ö INT-07d the ticket owner can read the resolution note through /mine (2.3569ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-07e a note of exactly 2,000 characters is accepted (upper boundary) (4.9227ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-07f resolving an already Closed ticket returns 404 and adds no second note (3.334ms)
+Γ£ö INT-07 Resolution notes (PATCH /api/tickets/:id/resolve) (26.9349ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+Γû╢ INT-08 Reopening (PATCH /api/tickets/:id/reopen)
+  Γ£ö INT-08a reopening without an explanation is rejected and the ticket stays Closed (5.8164ms)
+REOPEN ROUTE HIT
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-08b another student cannot reopen the ticket (404) and it stays Closed (3.9662ms)
+  Γ£ö INT-08c staff cannot use the student reopen route (403); anonymous request gets 401 (2.82ms)
+REOPEN ROUTE HIT
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-08d a ticket that is not Closed cannot be reopened (404) (3.4726ms)
+REOPEN ROUTE HIT
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-08e the owner reopens their Closed ticket: status becomes Open and the explanation is stored (3.4412ms)
+REOPEN ROUTE HIT
+Error reopening ticket: CastError: Cast to ObjectId failed for value "not-a-valid-id" (type string) at path "_id" for model "Ticket"
+    at SchemaObjectId.cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schema\objectId.js:252:11)
+    at SchemaType.applySetters (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schemaType.js:1405:12)
+    at SchemaType.castForQuery (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schemaType.js:1825:17)
+    at cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\cast.js:386:32)
+    at Query.cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:5227:12)
+    at Query._castConditions (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:2427:10)
+    at model.Query._findOneAndUpdate (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:3568:8)
+    at maybeTracedQueryExec (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:4797:83)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async D:\campus-it-help-desk\server\routes\ticketRoutes.js:293:20 {
+  stringValue: '"not-a-valid-id"',
+  messageFormat: undefined,
+  kind: 'ObjectId',
+  value: 'not-a-valid-id',
+  path: '_id',
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId (D:\campus-it-help-desk\server\node_modules\bson\lib\bson.cjs:2718:23)
+      at castObjectId (D:\campus-it-help-desk\server\node_modules\mongoose\lib\cast\objectid.js:25:12)
+      at SchemaObjectId.cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schema\objectId.js:250:12)
+      at SchemaType.applySetters (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schemaType.js:1405:12)
+      at SchemaType.castForQuery (D:\campus-it-help-desk\server\node_modules\mongoose\lib\schemaType.js:1825:17)
+      at cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\cast.js:386:32)
+      at Query.cast (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:5227:12)
+      at Query._castConditions (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:2427:10)
+      at model.Query._findOneAndUpdate (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:3568:8)
+      at maybeTracedQueryExec (D:\campus-it-help-desk\server\node_modules\mongoose\lib\query.js:4797:83),
+  valueType: 'string'
+}
+  Γ£û INT-08f a malformed ticket ID returns 400 like the other ticket routes (3.6044ms)
+Γ£û INT-08 Reopening (PATCH /api/tickets/:id/reopen) (31.3093ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+Γû╢ INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules
+  Γ£ö INT-09a a student can comment on their own non-Closed ticket (8.3113ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-09b staff can comment on any student's ticket and the owner sees the comment (5.5019ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-09c a student cannot comment on another student's ticket (404, nothing added) (3.8261ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-09d a student cannot comment on their own Closed ticket (404) (2.4251ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-09e staff can still comment on a Closed ticket (current backend rule) (2.382ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+  Γ£ö INT-09f comment length: empty, whitespace, and 2,001 characters rejected; 1 and 2,000 accepted (8.8599ms)
+  Γ£ö INT-09g malformed ticket ID returns 400; missing token returns 401 (3.4175ms)
+Γ£ö INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules (43.0223ms)
+(node:14468) [MONGOOSE] Warning: mongoose: the `new` option for `findOneAndUpdate()` and `findOneAndReplace()` is deprecated. Use `returnDocument: 'after'` instead.
+Γû╢ INT-10 Staff status filtering and overview data (GET /api/tickets/all)
+  Γ£ö INT-10a per-status counts from the API equal the database counts and sum to the total (9.9141ms)
+  Γ£ö INT-10b the API always returns the full set; a status query parameter does not shrink the totals (10.1204ms)
+Γ£ö INT-10 Staff status filtering and overview data (GET /api/tickets/all) (25.3881ms)
+Γä╣ tests 44
+Γä╣ suites 10
+Γä╣ pass 43
+Γä╣ fail 1
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 2086.5354
+Γä╣ start of coverage report
+Γä╣ --------------------------------------------------------------------------------------------------------
+Γä╣ file                | line % | branch % | funcs % | uncovered lines
+Γä╣ --------------------------------------------------------------------------------------------------------
+Γä╣ app.js              |  97.44 |   100.00 |    0.00 | 36
+Γä╣ controllers         |        |          |         | 
+Γä╣  authController.js  |  89.23 |    78.57 |  100.00 | 54-59 73-76 124-127
+Γä╣ middlewares         |        |          |         | 
+Γä╣  authMiddleware.js  | 100.00 |   100.00 |  100.00 | 
+Γä╣  roleMiddleware.js  | 100.00 |   100.00 |  100.00 | 
+Γä╣ models              |        |          |         | 
+Γä╣  Ticket.js          | 100.00 |   100.00 |  100.00 | 
+Γä╣  User.js            | 100.00 |   100.00 |  100.00 | 
+Γä╣ routes              |        |          |         | 
+Γä╣  authRoutes.js      | 100.00 |   100.00 |  100.00 | 
+Γä╣  ticketRoutes.js    |  91.21 |    84.44 |  100.00 | 61-64 76-79 122-125 192-195 220-223 257-261 274-277
+Γä╣ tests               |        |          |         | 
+Γä╣  support            |        |          |         | 
+Γä╣   testEnv.js        |  67.10 |    76.47 |   80.00 | 34-35 37-38 87-88 96-130 133-142
+Γä╣ --------------------------------------------------------------------------------------------------------
+Γä╣ all files           |  89.07 |    84.62 |   86.96 | 
+Γä╣ --------------------------------------------------------------------------------------------------------
+Γä╣ end of coverage report
+
+Γ£û failing tests:
+
+test at tests\integration\api.integration.test.js:517:3
+Γ£û INT-08f a malformed ticket ID returns 400 like the other ticket routes (3.6044ms)
+  AssertionError [ERR_ASSERTION]: expected 400 "Invalid ticket ID", got 500 {"message":"Failed to reopen ticket."}
+  
+  500 !== 400
+  
+      at TestContext.<anonymous> (D:\campus-it-help-desk\server\tests\integration\api.integration.test.js:519:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Exit code: 1

@@ -1,0 +1,51 @@
+﻿Command: npm run test
+Run started: 2026-11-09T15:10:26.9866944-06:00
+Branch: testing/milestone3-final  Base commit: cb57f90 (+ uncommitted DEF-02 fix and maintainability fixes M-01, M-02, M-04, M-06, M-08)
+Database: local isolated test database (Atlas and server/.env not used)
+
+
+> server@1.0.0 test
+> node --test tests/*.test.js
+
+✔ Valid JWT permits access and sets req.user (4.1715ms)
+✔ Missing Authorization header is rejected with 401 (0.4472ms)
+✔ Malformed Authorization header is rejected with 401 (0.4654ms)
+✔ Invalid JWT is rejected with 401 (0.4797ms)
+✔ Expired JWT is rejected with 401 (0.961ms)
+✔ Valid credentials return 200 with a JWT (138.8881ms)
+✔ Incorrect password is rejected with 401 (58.6859ms)
+✔ Unknown email is rejected with the same 401 message (0.4184ms)
+✔ Missing credentials are rejected with 400 (0.331ms)
+✔ Returned JWT contains the expected user ID and role (60.6204ms)
+✔ Database error returns 500 with a generic message (0.3002ms)
+✔ Valid registration returns 201 with the student role (78.0038ms)
+✔ Missing email or password returns 400 (0.3616ms)
+✔ Duplicate email is rejected and no user is created (0.1802ms)
+✔ Password is hashed before saving (118.1767ms)
+✔ Response does not expose the password (59.8508ms)
+✔ Database error returns 500 with a generic message (0.3609ms)
+✔ Staff can access staff-only routes (2.3703ms)
+✔ Student cannot access staff-only routes (0.2776ms)
+✔ Request without user information is denied (0.1743ms)
+✔ Valid ticket passes validation and defaults to Open (6.2898ms)
+✔ Ticket without a title is rejected (1.1191ms)
+✔ Whitespace-only description is rejected (0.7488ms)
+✔ Invalid status is rejected (0.6751ms)
+✔ Valid status values are accepted (1.0775ms)
+✔ Comment containing exactly 2,000 characters is accepted (1.8684ms)
+✔ Comment containing 2,001 characters is rejected (0.8408ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 883.7985
+npm notice
+npm notice New minor version of npm available! 11.12.1 -> 11.21.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.21.2
+npm notice To update run: npm install -g npm@11.21.2
+npm notice
+
+Exit code: 0   Wall time: 1.9 s

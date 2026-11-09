@@ -23,17 +23,13 @@ app.use(express.json());
 
 // API routes:
 // - /api/auth    -> register and login (see routes/authRoutes.js)
-// - /api/tickets -> create and view tickets (see routes/ticketRoutes.js)
+// - /api/tickets -> create, view, update status, comment on, resolve,
+//                   and reopen tickets (see routes/ticketRoutes.js)
 app.use("/api/auth", authRoutes);
 app.use("/api/tickets", ticketRoutes);
-// Serve the frontend HTML/CSS/JS files from the public/ folder.
-app.use(express.static(path.join(__dirname, "../public")));
-app.use("/api/tickets", require("./routes/ticketRoutes"));
 
-// Simple test route to confirm the server is running.
-// Note: if public/ has an index.html, express.static above serves it first.
-app.get("/", (req, res) => {
-  res.json({ message: "Hello World" });
-});
+// Serve the frontend HTML/CSS/JS files from the public/ folder.
+// The homepage (/) is public/index.html.
+app.use(express.static(path.join(__dirname, "../public")));
 
 module.exports = app;

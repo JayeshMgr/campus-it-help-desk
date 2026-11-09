@@ -1,0 +1,222 @@
+﻿Regression run - all automated suites, executed sequentially
+Run started: 2026-11-09T11:38:10.0823322-06:00
+Branch: testing/milestone3-final  Base commit: cb57f90 (+ uncommitted test files only; no production code changed)
+
+
+===== node --test tests/*.test.js =====
+Γ£ö Valid JWT permits access and sets req.user (3.8422ms)
+Γ£ö Missing Authorization header is rejected with 401 (0.1894ms)
+Γ£ö Malformed Authorization header is rejected with 401 (0.3205ms)
+Γ£ö Invalid JWT is rejected with 401 (0.4769ms)
+Γ£ö Expired JWT is rejected with 401 (0.9284ms)
+Γ£ö Valid credentials return 200 with a JWT (129.7339ms)
+Γ£ö Incorrect password is rejected with 401 (58.8963ms)
+Γ£ö Unknown email is rejected with the same 401 message (0.247ms)
+Γ£ö Missing credentials are rejected with 400 (0.2126ms)
+Γ£ö Returned JWT contains the expected user ID and role (60.5893ms)
+Γ£ö Database error returns 500 with a generic message (0.22ms)
+Γ£ö Valid registration returns 201 with the student role (69.1217ms)
+Γ£ö Missing email or password returns 400 (0.2687ms)
+Γ£ö Duplicate email is rejected and no user is created (0.1471ms)
+Γ£ö Password is hashed before saving (119.4157ms)
+Γ£ö Response does not expose the password (59.1178ms)
+Γ£ö Database error returns 500 with a generic message (0.2637ms)
+Γ£ö Staff can access staff-only routes (0.7078ms)
+Γ£ö Student cannot access staff-only routes (0.1483ms)
+Γ£ö Request without user information is denied (0.1025ms)
+Γ£ö Valid ticket passes validation and defaults to Open (5.1604ms)
+Γ£ö Ticket without a title is rejected (0.9494ms)
+Γ£ö Whitespace-only description is rejected (0.5504ms)
+Γ£ö Invalid status is rejected (0.593ms)
+Γ£ö Valid status values are accepted (0.8204ms)
+Γ£ö Comment containing exactly 2,000 characters is accepted (1.7337ms)
+Γ£ö Comment containing 2,001 characters is rejected (0.752ms)
+Γä╣ tests 27
+Γä╣ suites 0
+Γä╣ pass 27
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 729.0693
+Exit code: 0   Wall time: 0.8 s
+
+===== node --test --test-concurrency=1 tests/integration/*.test.js =====
+Γû╢ INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB)
+  Γ£ö INT-01a valid registration creates a student account with a hashed password (171.4811ms)
+  Γ£ö INT-01b missing email or password is rejected and no account is created (11.5401ms)
+  Γ£ö INT-01c duplicate email is rejected and only one account exists (5.7554ms)
+  Γ£ö INT-01d a role supplied in the request body is ignored (no self-registration as staff) (178.0916ms)
+Γ£ö INT-01 Student registration (authRoutes -> authController -> User model -> MongoDB) (411.569ms)
+Γû╢ INT-02 Authentication (login -> JWT -> authMiddleware on protected routes)
+  Γ£ö INT-02a student login returns a valid signed JWT with the correct user ID and role (185.5149ms)
+  Γ£ö INT-02b staff login returns a token with the staff role (64.5412ms)
+  Γ£ö INT-02c wrong password and unknown email both return 401 with the same message and no token (65.8675ms)
+  Γ£ö INT-02d a valid token is accepted on a protected endpoint (3.1237ms)
+  Γ£ö INT-02e missing, malformed, forged, and expired tokens are rejected with 401 (7.3674ms)
+Γ£ö INT-02 Authentication (login -> JWT -> authMiddleware on protected routes) (326.7772ms)
+Γû╢ INT-03 Student ticket submission (POST /api/tickets -> Ticket model)
+  Γ£ö INT-03a authenticated student submits a ticket; it is persisted with the student's ID and status Open (11.9689ms)
+  Γ£ö INT-03b studentId and status in the request body are ignored (owner comes from the JWT) (2.5719ms)
+  Γ£ö INT-03c missing or whitespace-only required fields are rejected and nothing is saved (7.8494ms)
+  Γ£ö INT-03d staff cannot submit student tickets (403) and anonymous users get 401 (3.4846ms)
+Γ£ö INT-03 Student ticket submission (POST /api/tickets -> Ticket model) (26.0811ms)
+Γû╢ INT-04 Student ticket retrieval (GET /api/tickets/mine)
+  Γ£ö INT-04a each student receives only their own tickets (7.772ms)
+  Γ£ö INT-04b a student with no tickets receives an empty list (2.2201ms)
+  Γ£ö INT-04c staff token on the student-only /mine route is rejected with 403 (1.426ms)
+Γ£ö INT-04 Student ticket retrieval (GET /api/tickets/mine) (11.6165ms)
+Γû╢ INT-05 Staff ticket retrieval (GET /api/tickets/all with populate)
+  Γ£ö INT-05a staff receive tickets from multiple students with the owner's email and no password (8.4679ms)
+  Γ£ö INT-05b students cannot use the staff /all route (403, no ticket data) (1.0376ms)
+Γ£ö INT-05 Staff ticket retrieval (GET /api/tickets/all with populate) (9.6185ms)
+Γû╢ INT-06 Ticket status management (PATCH /api/tickets/:id/status)
+  Γ£ö INT-06a staff change Open -> In Progress; the change persists and the student sees it (7.3807ms)
+  Γ£ö INT-06b staff change In Progress -> Closed; the change persists and the student sees it (3.8819ms)
+  Γ£ö INT-06c invalid or missing status values are rejected and the status is unchanged (4.0184ms)
+  Γ£ö INT-06d malformed ticket ID returns 400 and an unknown valid ID returns 404 (2.481ms)
+  Γ£ö INT-06e students cannot change ticket status (403) and the status is unchanged (1.8736ms)
+Γ£ö INT-06 Ticket status management (PATCH /api/tickets/:id/status) (25.5401ms)
+Γû╢ INT-07 Resolution notes (PATCH /api/tickets/:id/resolve)
+  Γ£ö INT-07a empty, whitespace-only, and 2,001-character notes are rejected; ticket stays open (5.0002ms)
+  Γ£ö INT-07b students cannot resolve tickets (403) (1.5383ms)
+  Γ£ö INT-07c staff resolve with a note: status becomes Closed and the note is stored as a resolution (3.9336ms)
+  Γ£ö INT-07d the ticket owner can read the resolution note through /mine (1.8155ms)
+  Γ£ö INT-07e a note of exactly 2,000 characters is accepted (upper boundary) (3.9783ms)
+  Γ£ö INT-07f resolving an already Closed ticket returns 404 and adds no second note (2.8922ms)
+Γ£ö INT-07 Resolution notes (PATCH /api/tickets/:id/resolve) (21.3037ms)
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+REOPEN ROUTE HIT
+Γû╢ INT-08 Reopening (PATCH /api/tickets/:id/reopen)
+  Γ£ö INT-08a reopening without an explanation is rejected and the ticket stays Closed (4.712ms)
+REOPEN ROUTE HIT
+  Γ£ö INT-08b another student cannot reopen the ticket (404) and it stays Closed (4.3251ms)
+  Γ£ö INT-08c staff cannot use the student reopen route (403); anonymous request gets 401 (2.4177ms)
+REOPEN ROUTE HIT
+  Γ£ö INT-08d a ticket that is not Closed cannot be reopened (404) (2.9642ms)
+REOPEN ROUTE HIT
+  Γ£ö INT-08e the owner reopens their Closed ticket: status becomes Open and the explanation is stored (3.0123ms)
+REOPEN ROUTE HIT
+Error reopening ticket: CastError: Cast to ObjectId failed for value "not-a-valid-id" (type string) at path "_id" for model "Ticket"
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async D:\campus-it-help-desk\server\routes\ticketRoutes.js:293:20 {
+  stringValue: '"not-a-valid-id"',
+  messageFormat: undefined,
+  kind: 'ObjectId',
+  value: 'not-a-valid-id',
+  path: '_id',
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId (D:\campus-it-help-desk\server\node_modules\bson\lib\bson.cjs:2718:23)
+  valueType: 'string'
+}
+  Γ£û INT-08f a malformed ticket ID returns 400 like the other ticket routes (3.1267ms)
+Γ£û INT-08 Reopening (PATCH /api/tickets/:id/reopen) (26.5205ms)
+Γû╢ INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules
+  Γ£ö INT-09a a student can comment on their own non-Closed ticket (2.9535ms)
+  Γ£ö INT-09b staff can comment on any student's ticket and the owner sees the comment (4.3555ms)
+  Γ£ö INT-09c a student cannot comment on another student's ticket (404, nothing added) (3.6549ms)
+  Γ£ö INT-09d a student cannot comment on their own Closed ticket (404) (6.6387ms)
+  Γ£ö INT-09e staff can still comment on a Closed ticket (current backend rule) (2.4133ms)
+  Γ£ö INT-09f comment length: empty, whitespace, and 2,001 characters rejected; 1 and 2,000 accepted (7.8686ms)
+  Γ£ö INT-09g malformed ticket ID returns 400; missing token returns 401 (1.8519ms)
+Γ£ö INT-09 Comments (POST /api/tickets/:id/comments) - current permission rules (36.2751ms)
+Γû╢ INT-10 Staff status filtering and overview data (GET /api/tickets/all)
+  Γ£ö INT-10a per-status counts from the API equal the database counts and sum to the total (7.1032ms)
+  Γ£ö INT-10b the API always returns the full set; a status query parameter does not shrink the totals (6.6536ms)
+Γ£ö INT-10 Staff status filtering and overview data (GET /api/tickets/all) (17.1454ms)
+Γä╣ tests 44
+Γä╣ suites 10
+Γä╣ pass 43
+Γä╣ fail 1
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1439.8913
+
+Γ£û failing tests:
+
+test at tests\integration\api.integration.test.js:517:3
+Γ£û INT-08f a malformed ticket ID returns 400 like the other ticket routes (3.1267ms)
+  AssertionError [ERR_ASSERTION]: expected 400 "Invalid ticket ID", got 500 {"message":"Failed to reopen ticket."}
+  
+  500 !== 400
+  
+      at TestContext.<anonymous> (D:\campus-it-help-desk\server\tests\integration\api.integration.test.js:519:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1208:7)
+      at async Suite.processPendingSubtests (node:internal/test_runner/test:831:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 500,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Exit code: 1   Wall time: 1.5 s
+
+===== node  tests/system/run-system-tests.js =====
+# Browser: Google Chrome 156.0.8078.81 (headless)
+Γû╢ System tests (real browser + real server + isolated test database)
+  Γ£ö SYS-01 student registers through register.html and is sent to the login page (779.226ms)
+  Γ£ö SYS-02 registering an email that already exists shows an error and stays on the page (103.2118ms)
+  Γ£ö SYS-03 login with a wrong password shows 'Invalid credentials' and does not log in (161.4963ms)
+  Γ£ö SYS-04 student logs in and lands on the student dashboard with no tickets (236.2429ms)
+  Γ£ö SYS-05 student submits tickets through the form and they appear with status Open (197.3011ms)
+  Γ£ö SYS-06 submitting with an empty required field is blocked and nothing is saved (635.4707ms)
+  Γ£ö SYS-07 a second student sees only their own tickets (480.6892ms)
+  Γ£ö SYS-08 staff log in and see all tickets with each submitter's email and correct overview counts (354.4767ms)
+  Γ£ö SYS-09 staff change a ticket to In Progress; the card and the counts update (109.1247ms)
+  Γ£ö SYS-10 staff try to close without a note (blocked), then resolve with a resolution note (131.5791ms)
+  Γ£ö SYS-11 status filter shows only matching tickets and does not change the overview totals (330.688ms)
+  Γ£ö SYS-12 student sees the Closed status and the resolution note on their dashboard (344.6354ms)
+  Γ£ö SYS-13 student reopens the Closed ticket (explanation required); status returns to Open (124.9472ms)
+# SYS-14 observation: student.html after logout -> url=/student.html, list="Error loading IT requests."
+  Γ£ö SYS-14 logout clears the session; protected pages afterwards do not show ticket data (341.2467ms)
+Γ£ö System tests (real browser + real server + isolated test database) (5226.0889ms)
+Γä╣ tests 14
+Γä╣ suites 1
+Γä╣ pass 14
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5380.109
+Exit code: 0   Wall time: 6 s
+
+===== node  tests/nfr/run-nfr-tests.js =====
+# API login: median 58.4 ms, max 59.6 ms
+# API submitTicket: median 2.2 ms, max 5.5 ms
+# API viewOwnTickets: median 1.8 ms, max 3.2 ms
+# API staffViewAll: median 2.6 ms, max 6.2 ms
+Γû╢ NFR-02 Performance (limit: each operation < 5 s)
+  Γ£ö NFR-02a API timings over 10 runs: login, ticket submission, student view, staff view (725.854ms)
+# Browser loginToDashboard: median 132.7 ms, max 468.9 ms
+# Browser submitTicketUntilListed: median 57.5 ms, max 96.9 ms
+# Browser openDashboardUntilListed: median 38 ms, max 45.3 ms
+  Γ£ö NFR-02b browser workflow timings over 5 runs (Chrome): login, submit, view (2709.5148ms)
+Γ£ö NFR-02 Performance (limit: each operation < 5 s) (4234.7908ms)
+Γû╢ NFR-03 Reliability (data survives closing and reopening the system)
+  Γ£ö NFR-03a ticket, status, and notes are still available after the server process is restarted (757.34ms)
+Γ£ö NFR-03 Reliability (data survives closing and reopening the system) (757.4906ms)
+Γû╢ NFR-04 Security and privacy - additional HTTP probes
+  Γ£ö NFR-04a a student token is rejected on every staff-only endpoint (65.3689ms)
+  Γ£ö NFR-04b a token whose payload was edited to role=staff (without re-signing) is rejected (1.3509ms)
+  Γ£ö NFR-04c an unsigned token (alg: none) is rejected (0.8542ms)
+  Γ£ö NFR-04d a MongoDB operator in the login email does not log anyone in (60.3771ms)
+  Γ£ö NFR-04e another student cannot read, comment on, or reopen a ticket they do not own (73.853ms)
+  Γ£ö NFR-04f responses never contain password hashes (124.2719ms)
+Γ£ö NFR-04 Security and privacy - additional HTTP probes (326.604ms)
+Γû╢ NFR-05 Compatibility
+  Γ£ö NFR-05a smoke test in Microsoft Edge: login, submit ticket, view list, logout (1599.1897ms)
+Γ£ö NFR-05 Compatibility (1599.3552ms)
+Γä╣ tests 10
+Γä╣ suites 4
+Γä╣ pass 10
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 6951.2417
+Exit code: 0   Wall time: 7.5 s

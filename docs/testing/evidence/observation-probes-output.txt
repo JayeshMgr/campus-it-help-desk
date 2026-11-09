@@ -1,0 +1,15 @@
+﻿Command: node tests/integration/observation-probes.js
+Run started: 2026-11-09T11:37:31.3858028-06:00
+Observations only (not pass/fail). Local MongoDB database campus_it_help_desk_m3final_probe_test, dropped before/after.
+
+| ID | Probe | HTTP status | Message | Note |
+| --- | --- | --- | --- | --- |
+| OBS-P1 | Register email without '@' ('not-an-email') | 201 | User created successfully |  |
+| OBS-P2 | Register with a 1-character password | 201 | User created successfully |  |
+| OBS-P3 | Register the same email in lower case after a mixed-case registration | 201 | User created successfully |  |
+| OBS-P4 | Submit ticket with a 10,000-character title | 201 |  |  |
+| OBS-P5 | Submit ticket missing title - message returned to the client | 400 | Ticket validation failed: title: Path `title` is required. |  |
+| OBS-P6 | Staff set status Closed via dropdown route (no resolution note) | 200 |  | resolution comments on ticket: 0 |
+| OBS-P7 | Staff set a Closed ticket back to Open via dropdown route (no explanation) | 200 |  | comments on ticket: 0 |
+| OBS-P8 | Response headers on GET /api/tickets/all with a foreign Origin | 200 |  | X-Powered-By: Express; Access-Control-Allow-Origin: * |
+| OBS-P9 | GET / (app.js defines a JSON 'Hello World' route) | 200 |  | content-type: text/html; charset=utf-8 |
