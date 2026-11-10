@@ -1,0 +1,44 @@
+﻿Command: npm run test:nfr
+Run started: 2026-11-09T15:10:39.9214224-06:00
+Branch: testing/milestone3-final  Base commit: cb57f90 (+ uncommitted DEF-02 fix and maintainability fixes M-01, M-02, M-04, M-06, M-08)
+Database: local isolated test database (Atlas and server/.env not used)
+
+
+> server@1.0.0 test:nfr
+> node tests/nfr/run-nfr-tests.js
+
+# API login: median 62.2 ms, max 68.3 ms
+# API submitTicket: median 3.8 ms, max 8.3 ms
+# API viewOwnTickets: median 3.9 ms, max 5.5 ms
+# API staffViewAll: median 4.9 ms, max 8.8 ms
+▶ NFR-02 Performance (limit: each operation < 5 s)
+  ✔ NFR-02a API timings over 10 runs: login, ticket submission, student view, staff view (822.4723ms)
+# Browser loginToDashboard: median 163.5 ms, max 585.8 ms
+# Browser submitTicketUntilListed: median 62.9 ms, max 136.1 ms
+# Browser openDashboardUntilListed: median 68.7 ms, max 87.3 ms
+  ✔ NFR-02b browser workflow timings over 5 runs (Chrome): login, submit, view (3766.7632ms)
+✔ NFR-02 Performance (limit: each operation < 5 s) (5632.7503ms)
+▶ NFR-03 Reliability (data survives closing and reopening the system)
+  ✔ NFR-03a ticket, status, and notes are still available after the server process is restarted (957.3086ms)
+✔ NFR-03 Reliability (data survives closing and reopening the system) (957.4858ms)
+▶ NFR-04 Security and privacy - additional HTTP probes
+  ✔ NFR-04a a student token is rejected on every staff-only endpoint (74.3665ms)
+  ✔ NFR-04b a token whose payload was edited to role=staff (without re-signing) is rejected (1.2121ms)
+  ✔ NFR-04c an unsigned token (alg: none) is rejected (0.8802ms)
+  ✔ NFR-04d a MongoDB operator in the login email does not log anyone in (63.8183ms)
+  ✔ NFR-04e another student cannot read, comment on, or reopen a ticket they do not own (86.3741ms)
+  ✔ NFR-04f responses never contain password hashes (135.0911ms)
+✔ NFR-04 Security and privacy - additional HTTP probes (362.3902ms)
+▶ NFR-05 Compatibility
+  ✔ NFR-05a smoke test in Microsoft Edge: login, submit ticket, view list, logout (1832.7728ms)
+✔ NFR-05 Compatibility (1832.9537ms)
+ℹ tests 10
+ℹ suites 4
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8824.3105
+
+Exit code: 0   Wall time: 10 s

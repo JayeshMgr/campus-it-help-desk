@@ -1,7 +1,4 @@
-
-
 function createTicketControls(ticket, ticketItem, token) {
-
   // Display existing comments
   const commentsHeading = document.createElement("h4");
   commentsHeading.textContent = "Comments";
@@ -14,41 +11,41 @@ function createTicketControls(ticket, ticketItem, token) {
 
       // If comments are objects, get their text property.
       // If they are strings, display the string directly.
-     if (typeof comment === "string") {
-  commentElement.textContent = comment;
-} else {
-  // Classes let the CSS color staff/student and resolution/reopen comments.
-  if (comment.authorRole) {
-    commentElement.classList.add(`comment-${comment.authorRole}`);
-  }
+      if (typeof comment === "string") {
+        commentElement.textContent = comment;
+      } else {
+        // Classes let the CSS color staff/student and resolution/reopen comments.
+        if (comment.authorRole) {
+          commentElement.classList.add(`comment-${comment.authorRole}`);
+        }
 
-    let label = "";
+        let label = "";
 
-  if (comment.type === "resolution") {
-    label = "Resolution";
-    commentElement.classList.add("comment-resolution");
-  } else if (comment.type === "reopen") {
-    label = "Reopening Explanation";
-    commentElement.classList.add("comment-reopen");
-  }
+        if (comment.type === "resolution") {
+          label = "Resolution";
+          commentElement.classList.add("comment-resolution");
+        } else if (comment.type === "reopen") {
+          label = "Reopening Explanation";
+          commentElement.classList.add("comment-reopen");
+        }
 
-  const commentHeader = document.createElement("p");
-  commentHeader.className = "comment-author";
-  commentHeader.textContent = comment.authorRole || "Unknown";
+        const commentHeader = document.createElement("p");
+        commentHeader.className = "comment-author";
+        commentHeader.textContent = comment.authorRole || "Unknown";
 
-  if (label) {
-    const typeLabel = document.createElement("span");
-    typeLabel.className = "comment-type";
-    typeLabel.textContent = label;
-    commentHeader.appendChild(typeLabel);
-  }
+        if (label) {
+          const typeLabel = document.createElement("span");
+          typeLabel.className = "comment-type";
+          typeLabel.textContent = label;
+          commentHeader.appendChild(typeLabel);
+        }
 
-  const commentText = document.createElement("p");
-  commentText.className = "comment-text";
-  commentText.textContent = comment.text;
+        const commentText = document.createElement("p");
+        commentText.className = "comment-text";
+        commentText.textContent = comment.text;
 
-  commentElement.append(commentHeader, commentText);
-}
+        commentElement.append(commentHeader, commentText);
+      }
       ticketItem.appendChild(commentElement);
     });
   } else {
@@ -62,46 +59,36 @@ function createTicketControls(ticket, ticketItem, token) {
   const controls = document.createElement("div");
   controls.className = "student-ticket-controls";
 
-  // Do not show controls for closed tickets
- // Closed tickets get a Reopen Ticket form.
-if (ticket.status === "Closed") {
-  const reopenHeading = document.createElement("h4");
-  reopenHeading.textContent = "Reopen Ticket";
+  // Closed tickets get a Reopen Ticket form instead of the comment box.
+  if (ticket.status === "Closed") {
+    const reopenHeading = document.createElement("h4");
+    reopenHeading.textContent = "Reopen Ticket";
 
-  const reopenExplanation = document.createElement("textarea");
-  reopenExplanation.placeholder =
-    "Explain why this ticket needs to be reopened...";
-  reopenExplanation.rows = 3;
-  reopenExplanation.maxLength = 2000;
+    const reopenExplanation = document.createElement("textarea");
+    reopenExplanation.placeholder =
+      "Explain why this ticket needs to be reopened...";
+    reopenExplanation.rows = 3;
+    reopenExplanation.maxLength = 2000;
 
-  const reopenButton = document.createElement("button");
-  reopenButton.textContent = "Reopen Ticket";
+    const reopenButton = document.createElement("button");
+    reopenButton.textContent = "Reopen Ticket";
 
-  reopenButton.addEventListener("click", async () => {
-    const comment = reopenExplanation.value.trim();
+    reopenButton.addEventListener("click", async () => {
+      const comment = reopenExplanation.value.trim();
 
-    if (!comment) {
-      alert("Please explain why this ticket needs to be reopened.");
-      return;
-    }
+      if (!comment) {
+        alert("Please explain why this ticket needs to be reopened.");
+        return;
+      }
 
-    await updateTicket(
-      ticket._id,
-      "/reopen",
-      { comment },
-      token
-    );
-  });
+      await updateTicket(ticket._id, "/reopen", { comment }, token);
+    });
 
-  controls.append(
-    reopenHeading,
-    reopenExplanation,
-    reopenButton
-  );
-  ticketItem.appendChild(controls);
+    controls.append(reopenHeading, reopenExplanation, reopenButton);
+    ticketItem.appendChild(controls);
 
-  return;
-}
+    return;
+  }
 
   // Create area for comment input
   const commentInput = document.createElement("textarea");
@@ -121,20 +108,10 @@ if (ticket.status === "Closed") {
       return;
     }
 
-    await updateTicket(
-      ticket._id,
-      "/comments",
-      { comment },
-      token
-    );
+    await updateTicket(ticket._id, "/comments", { comment }, token);
   });
 
-
-
-  controls.append(
-    commentInput,
-    addCommentButton
-  );
+  controls.append(commentInput, addCommentButton);
   ticketItem.appendChild(controls);
 }
 
@@ -143,7 +120,7 @@ async function loadITRequests() {
   const token = sessionStorage.getItem("token");
 
   try {
-    // Get all IT requests from the server
+    // Get only the logged-in student's tickets from the server
     const response = await fetch("/api/tickets/mine", {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -154,13 +131,6 @@ async function loadITRequests() {
       throw new Error("Failed to fetch IT requests");
     }
 
-    /*const requests = await response.json();
-
-    // Find requests belonging to this student
-    const studentRequests = requests.filter(
-      (request) => request.studentId === token
-    );
-*/
     const studentRequests = await response.json();
     // Clear the existing list
     requestList.textContent = "";
@@ -215,20 +185,17 @@ async function loadITRequests() {
 
 async function updateTicket(ticketId, action, data, token) {
   try {
-    // Comments use POST; closing a ticket uses PATCH.
+    // Comments use POST; reopening a ticket uses PATCH.
     const method = action === "/comments" ? "POST" : "PATCH";
 
-    const response = await fetch(
-      `/api/tickets/${ticketId}${action}`,
-      {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`/api/tickets/${ticketId}${action}`, {
+      method: method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
 
     const result = await response.json();
 
@@ -238,13 +205,12 @@ async function updateTicket(ticketId, action, data, token) {
       return;
     }
 
-  if (action === "/comments") {
-  alert("Comment added successfully.");
-} else if (action === "/reopen") {
-  alert("Ticket reopened successfully.");
-} else {
-  alert("Ticket closed successfully.");
-}
+    // Students only send "/comments" or "/reopen" from this page.
+    if (action === "/comments") {
+      alert("Comment added successfully.");
+    } else {
+      alert("Ticket reopened successfully.");
+    }
     // Reload the tickets so the new comment or status appears.
     await loadITRequests();
   } catch (error) {
@@ -263,7 +229,9 @@ async function submitTicket(event) {
   const form = document.getElementById("ticket-form");
   const title = document.getElementById("ticket-title").value.trim();
   const category = document.getElementById("ticket-category").value.trim();
-  const description = document.getElementById("ticket-description").value.trim();
+  const description = document
+    .getElementById("ticket-description")
+    .value.trim();
 
   if (!title || !category || !description) {
     alert("Please fill in the title, category, and description.");
@@ -320,6 +288,3 @@ async function logout() {
 }
 
 loadITRequests();
-
-
-

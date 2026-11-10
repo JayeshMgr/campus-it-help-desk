@@ -1,0 +1,33 @@
+﻿Command: node tests/system/run-system-tests.js  (npm run test:system)
+Run started: 2026-11-09T11:35:48.6846712-06:00
+Type: Automated browser system test - headless Google Chrome via playwright-core, real server.js process, local MongoDB database campus_it_help_desk_m3final_sys_test (dropped before/after). Atlas and server/.env not used.
+OS: Microsoft Windows 11 Pro build 26300
+Node: v25.9.0
+
+# Browser: Google Chrome 156.0.8078.81 (headless)
+Γû╢ System tests (real browser + real server + isolated test database)
+  Γ£ö SYS-01 student registers through register.html and is sent to the login page (966.2107ms)
+  Γ£ö SYS-02 registering an email that already exists shows an error and stays on the page (113.7334ms)
+  Γ£ö SYS-03 login with a wrong password shows 'Invalid credentials' and does not log in (172.3509ms)
+  Γ£ö SYS-04 student logs in and lands on the student dashboard with no tickets (245.2102ms)
+  Γ£ö SYS-05 student submits tickets through the form and they appear with status Open (246.2323ms)
+  Γ£ö SYS-06 submitting with an empty required field is blocked and nothing is saved (663.3043ms)
+  Γ£ö SYS-07 a second student sees only their own tickets (486.3256ms)
+  Γ£ö SYS-08 staff log in and see all tickets with each submitter's email and correct overview counts (427.6691ms)
+  Γ£ö SYS-09 staff change a ticket to In Progress; the card and the counts update (103.7999ms)
+  Γ£ö SYS-10 staff try to close without a note (blocked), then resolve with a resolution note (124.653ms)
+  Γ£ö SYS-11 status filter shows only matching tickets and does not change the overview totals (326.4838ms)
+  Γ£ö SYS-12 student sees the Closed status and the resolution note on their dashboard (354.9622ms)
+  Γ£ö SYS-13 student reopens the Closed ticket (explanation required); status returns to Open (125.0138ms)
+# SYS-14 observation: student.html after logout -> url=/student.html, list="Error loading IT requests."
+  Γ£ö SYS-14 logout clears the session; protected pages afterwards do not show ticket data (345.2345ms)
+Γ£ö System tests (real browser + real server + isolated test database) (5730.9681ms)
+Γä╣ tests 14
+Γä╣ suites 1
+Γä╣ pass 14
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 5883.5448
+Exit code: 0

@@ -267,8 +267,6 @@ router.patch("/:id/reopen",
   roleMiddleware("student"),
   async (req, res) => {
   try {
-
-    console.log("REOPEN ROUTE HIT");
     // Only students can reopen tickets.
     if (req.user.role !== "student") {
       return res.status(403).json({
@@ -286,6 +284,13 @@ router.patch("/:id/reopen",
     ) {
       return res.status(400).json({
         message: "Please provide an explanation of why this ticket needs to be reopened."
+      });
+    }
+
+    // Check whether the ticket ID is valid.
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({
+        message: "Invalid ticket ID",
       });
     }
 

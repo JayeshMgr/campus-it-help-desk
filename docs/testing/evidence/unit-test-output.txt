@@ -1,0 +1,58 @@
+﻿Command: node --test --experimental-test-coverage tests/*.test.js  (equivalent to: npm run test:coverage)
+Run started: 2026-11-09T11:32:40.2567564-06:00
+Working directory: server/
+Node: v25.9.0
+Branch: testing/milestone3-final  Commit under test: cb57f90 (+ uncommitted test files)
+
+Γ£ö Valid JWT permits access and sets req.user (6.0523ms)
+Γ£ö Missing Authorization header is rejected with 401 (0.167ms)
+Γ£ö Malformed Authorization header is rejected with 401 (0.3046ms)
+Γ£ö Invalid JWT is rejected with 401 (0.4954ms)
+Γ£ö Expired JWT is rejected with 401 (2.1879ms)
+Γ£ö Valid credentials return 200 with a JWT (174.3869ms)
+Γ£ö Incorrect password is rejected with 401 (77.9842ms)
+Γ£ö Unknown email is rejected with the same 401 message (1.0679ms)
+Γ£ö Missing credentials are rejected with 400 (0.7235ms)
+Γ£ö Returned JWT contains the expected user ID and role (79.3517ms)
+Γ£ö Database error returns 500 with a generic message (0.2574ms)
+Γ£ö Valid registration returns 201 with the student role (91.5809ms)
+Γ£ö Missing email or password returns 400 (0.297ms)
+Γ£ö Duplicate email is rejected and no user is created (0.162ms)
+Γ£ö Password is hashed before saving (156.5613ms)
+Γ£ö Response does not expose the password (79.4337ms)
+Γ£ö Database error returns 500 with a generic message (0.408ms)
+Γ£ö Staff can access staff-only routes (1.7429ms)
+Γ£ö Student cannot access staff-only routes (0.2547ms)
+Γ£ö Request without user information is denied (0.1036ms)
+Γ£ö Valid ticket passes validation and defaults to Open (10.7595ms)
+Γ£ö Ticket without a title is rejected (1.395ms)
+Γ£ö Whitespace-only description is rejected (0.4832ms)
+Γ£ö Invalid status is rejected (0.4458ms)
+Γ£ö Valid status values are accepted (0.7479ms)
+Γ£ö Comment containing exactly 2,000 characters is accepted (3.9266ms)
+Γ£ö Comment containing 2,001 characters is rejected (1.0435ms)
+Γä╣ tests 27
+Γä╣ suites 0
+Γä╣ pass 27
+Γä╣ fail 0
+Γä╣ cancelled 0
+Γä╣ skipped 0
+Γä╣ todo 0
+Γä╣ duration_ms 1070.7957
+Γä╣ start of coverage report
+Γä╣ -------------------------------------------------------------------
+Γä╣ file               | line % | branch % | funcs % | uncovered lines
+Γä╣ -------------------------------------------------------------------
+Γä╣ controllers        |        |          |         | 
+Γä╣  authController.js | 100.00 |   100.00 |  100.00 | 
+Γä╣ middlewares        |        |          |         | 
+Γä╣  authMiddleware.js | 100.00 |   100.00 |  100.00 | 
+Γä╣  roleMiddleware.js | 100.00 |   100.00 |  100.00 | 
+Γä╣ models             |        |          |         | 
+Γä╣  Ticket.js         | 100.00 |   100.00 |  100.00 | 
+Γä╣  User.js           | 100.00 |   100.00 |  100.00 | 
+Γä╣ -------------------------------------------------------------------
+Γä╣ all files          | 100.00 |   100.00 |  100.00 | 
+Γä╣ -------------------------------------------------------------------
+Γä╣ end of coverage report
+Exit code: 0
