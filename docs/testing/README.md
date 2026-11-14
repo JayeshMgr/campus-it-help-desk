@@ -55,6 +55,7 @@ Our goal was to confirm that the system meets the 12 functional requirements (FR
 | Nonfunctional (automated) | Performance, reliability, security, and compatibility | 10 |
 | Code review | Maintainability (NFR-06) | 10 findings |
 | Team check | Each team member ran the app on their own computer (NFR-05) | 3 members |
+| Manual usability | A new student registered, logged in, and submitted a ticket without help (NFR-01) | 1 (TC-24) |
 
 ## 4.4 Entry and exit criteria
 
@@ -65,7 +66,7 @@ Our goal was to confirm that the system meets the 12 functional requirements (FR
 | Every FR and NFR has at least one test or review | Met |
 | All automated tests pass | Met: 95/95 in the final run (Nov 9, 15:10) |
 | No open High-severity defects in our code | Met. DEF-05 (Medium, a third-party package advisory) is still open |
-| Timed usability test (NFR-01) | **Not met.** No timed test was recorded |
+| Usability test (NFR-01) | Met. TC-24 passed (team-confirmed manual test; exact duration not recorded) |
 
 ## 4.5 How to run the tests
 

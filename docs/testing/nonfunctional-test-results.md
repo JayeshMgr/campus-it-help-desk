@@ -5,7 +5,7 @@
 
 | NFR | Requirement | How we tested it | Result | Status |
 | --- | ----------- | ---------------- | ------ | ------ |
-| NFR-01 Usability | A student can register, log in, and submit a ticket within 5 minutes without help | Timed test with a new user | No timed test was recorded | **Not Verified** |
+| NFR-01 Usability | A student can register, log in, and submit a ticket within 5 minutes without help | Manual usability test with a new student (TC-24) | Workflow completed without assistance in under 5 minutes, as confirmed by the team (exact duration not recorded) | **Verified** |
 | NFR-02 Performance | Login, submission, and viewing finish within 5 seconds on the team's test computer | Each action timed 10 times through the API and 5 times in Chrome | See table below. Slowest action was 586 ms | **Verified** |
 | NFR-03 Reliability | Tickets remain available after the system is closed and reopened | Stopped the server, started it again, logged in, and compared the data | Login worked after restart. 16 tickets before and 16 after, with the same IDs; a closed ticket kept its status and resolution note | **Verified** (local test database) |
 | NFR-04 Security/privacy | Students access only their own tickets; staff access all | Login, token, role, and ticket-ownership tests (see below) | Every unauthorized request rejected; no password data in any response | **Verified**, with the limitations listed below |

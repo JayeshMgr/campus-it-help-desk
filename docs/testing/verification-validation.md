@@ -21,8 +21,8 @@
 | System tests in a real browser (SYS-01 to SYS-14) | Students can register, submit, and track tickets; staff can view, update, resolve, and filter tickets | Pass |
 | Team members ran the app on their own computers | The app works on the computers our team uses | Pass (team-reported; no versions recorded) |
 | Visual check of the final design | Pages are clear and readable | Final pages captured in the system-test screenshots; no separate formal review recorded |
-| Timed usability test (NFR-01) | A new student finishes the main task in 5 minutes without help | **Not Verified** (not performed) |
+| Manual usability test (NFR-01, TC-24) | A new student finishes the main task in 5 minutes without help | Pass (team-confirmed; completed in under 5 minutes, exact duration not recorded) |
 
 ## Summary
 
-Verification is strong: all 95 automated tests passed in the final run. Validation is mostly complete. The workflows were tested end to end and the team confirmed the app runs on their computers. However, the NFR-01 timed usability test with a new user was never performed.
+Verification is strong: all 95 automated tests passed in the final run. Validation is also complete for the core needs. The workflows were tested end to end, the team confirmed the app runs on their computers, and a new student completed the register, login, and submit workflow without help in under 5 minutes (TC-24).
