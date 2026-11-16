@@ -48,3 +48,20 @@ npm run dev
 ```
 
 If the pull changed `server/package.json`, run `npm install` before `npm run dev`.
+
+
+## 5. Create a Staff Account
+
+Student accounts can be registered through the website. Staff accounts must be created separately.
+
+From the `server` folder, run:
+
+```powershell
+npm run create-staff
+```
+
+Enter the staff email and password, then confirm the account creation.
+
+Once created, open `http://localhost:5000/login.html` and log in using the new staff credentials.
+
+**Note:** A working MongoDB connection configured in `server/.env` is required.
